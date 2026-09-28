@@ -1,6 +1,5 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const fine = matchMedia('(pointer: fine)').matches;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -11,18 +10,8 @@ document.body.classList.add('loading');
 $('#year').textContent = new Date().getFullYear();
 
 /* ---------- loader + 3D ---------- */
-const pctEl = $('#loader-pct');
-let shown = 0;
-function progress(p) {
-  const from = shown; shown = p;
-  const t0 = performance.now();
-  const step = (t) => {
-    const k = Math.min(1, (t - t0) / 400);
-    pctEl.textContent = Math.round(from + (p - from) * k);
-    if (k < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
+const fillEl = $('#loader-fill');
+function progress(p) { fillEl.style.transform = `scaleX(${p / 100})`; }
 
 let booth = null;
 const started = performance.now();
@@ -126,42 +115,6 @@ const countObs = new IntersectionObserver((entries) => {
   });
 }, { threshold: .6 });
 $$('[data-count]').forEach((el) => countObs.observe(el));
-
-/* ---------- cursor ---------- */
-if (fine) {
-  const cur = $('.cursor'), dot = $('.cursor-dot'), ring = $('.cursor-ring');
-  let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;
-  addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; cur.classList.add('live'); dot.style.transform = `translate(${x}px,${y}px)`; }, { passive: true });
-  (function loop() {
-    rx += (x - rx) * .18; ry += (y - ry) * .18;
-    ring.style.transform = `translate(${rx}px,${ry}px)`;
-    requestAnimationFrame(loop);
-  })();
-  document.addEventListener('pointerover', (e) => cur.classList.toggle('hover', !!e.target.closest('a, button, .tilt, input, textarea, select')));
-}
-
-/* ---------- magnetic buttons + tilt cards ---------- */
-if (fine && !reduced) {
-  $$('.magnetic').forEach((el) => {
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .25}px, ${(e.clientY - r.top - r.height / 2) * .35}px)`;
-    });
-    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
-  });
-  $$('.tilt').forEach((el) => {
-    const base = el.classList.contains('pkg-featured') ? ' translateY(-16px)' : '';
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-      el.style.transform = `perspective(900px) rotateY(${(px - .5) * 10}deg) rotateX(${(.5 - py) * 10}deg)${base}`;
-      el.style.setProperty('--mx', `${px * 100}%`);
-      el.style.setProperty('--my', `${py * 100}%`);
-      el.style.setProperty('--sheen', `${100 - px * 100}%`);
-    });
-    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
-  });
-}
 
 /* ---------- WhatsApp ---------- */
 $$('.wa-link').forEach((a) => { a.href = waUrl('היי! אשמח לשמוע עוד על עמדות הצילום של AURA event 📸✨'); a.target = '_blank'; a.rel = 'noopener'; });

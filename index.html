@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>AURA event · עמדות צילום יוקרתיות לאירועים</title>
-  <meta name="description" content="AURA event – עמדת הצילום Snap Box: גוף עץ, תאורת טבעת, שטיח אדום, הדפסה מיידית ושיתוף לנייד. חתונות, בר/בת מצווה ואירועי חברה.">
-  <meta name="theme-color" content="#07060a">
+  <title>AURA event · עמדות צילום לאירועים</title>
+  <meta name="description" content="AURA event: עמדת הצילום Snap Box מעץ טבעי, אור רך, הדפסה מיידית ושיתוף לנייד. לחתונות, בר ובת מצווה ואירועי חברה.">
+  <meta name="theme-color" content="#f4efe6">
   <meta property="og:title" content="AURA event · Snap Box">
-  <meta property="og:description" content="הרגע שכולם ידברו עליו. עמדות צילום יוקרתיות לאירועים.">
+  <meta property="og:description" content="כל רגע ראוי למסגרת. עמדות צילום לאירועים.">
   <meta property="og:image" content="assets/snapbox.jpg">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='none' stroke='%23d8b46a' stroke-width='6'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23d8b46a'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%234a5540' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23a8864f'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Frank+Ruhl+Libre:wght@300;400;500&family=Heebo:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script type="importmap">
     {
@@ -26,25 +26,18 @@
 </head>
 <body>
 
-  <!-- Loader -->
   <div id="loader" aria-hidden="true">
-    <div class="loader-ring"><span></span></div>
-    <div class="loader-word">AURA</div>
-    <div class="loader-pct"><span id="loader-pct">0</span>%</div>
+    <div class="loader-mark"></div>
+    <div class="loader-word">AURA <em>event</em></div>
+    <div class="loader-bar"><span id="loader-fill"></span></div>
   </div>
 
-  <!-- 3D stage (fixed behind all content) -->
   <div id="stage"><canvas id="booth-canvas" aria-label="מודל תלת-ממדי של עמדת הצילום Snap Box"></canvas></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
   <div id="flash" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
 
-  <div class="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
-
-  <!-- Header -->
   <header id="top">
-    <a href="#hero" class="brand" aria-label="AURA event – לראש העמוד">
+    <a href="#hero" class="brand" aria-label="AURA event, לראש העמוד">
       <span class="brand-mark"></span>
       <span class="brand-word">AURA<em>event</em></span>
     </a>
@@ -55,114 +48,103 @@
       <a href="#packages">חבילות</a>
       <a href="#contact">צור קשר</a>
     </nav>
-    <a href="#contact" class="btn btn-gold btn-sm header-cta magnetic">בדקו תאריך</a>
+    <a href="#contact" class="btn btn-dark btn-sm header-cta">בדיקת תאריך</a>
     <button class="burger" id="burger" aria-label="פתיחת תפריט" aria-expanded="false"><span></span><span></span></button>
   </header>
 
   <main>
 
-    <!-- HERO -->
     <section id="hero" class="scene-section" data-cam="hero">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow reveal"><span class="line"></span>עמדות צילום יוקרתיות לאירועים</p>
-          <h1 class="display" data-split>הרגע שכולם<br><em>ידברו עליו.</em></h1>
-          <p class="lead reveal">Snap Box של AURA: עמדת צילום מעץ מלא, תאורת טבעת בסטנדרט סטודיו, הדפסה מיידית ושיתוף ישיר לנייד. וכל אורח מקבל שטיח אדום משלו.</p>
+      <div class="wrap split">
+        <div class="panel hero-copy">
+          <p class="eyebrow reveal">עמדות צילום לאירועים <span class="dot"></span> בכל הארץ</p>
+          <h1 class="display" data-split>כל רגע<br><em>ראוי למסגרת.</em></h1>
+          <p class="lead reveal">Snap Box של AURA היא עמדת צילום מעץ טבעי, עם אור רך כמו בשעת הזהב והדפסה מיידית. היא נבנתה כדי להשתלב באירועים המעוצבים ביותר, מחתונה בגן ועד ערב גאלה.</p>
           <div class="cta-row reveal">
-            <a href="#contact" class="btn btn-gold magnetic"><span>בדקו זמינות לתאריך</span></a>
-            <a href="#try" class="btn btn-ghost magnetic"><span>נסו את העמדה</span><i class="arr">←</i></a>
+            <a href="#contact" class="btn btn-dark">בדיקת זמינות לתאריך</a>
+            <a href="#try" class="btn btn-line">נסו את העמדה <i class="arr">←</i></a>
           </div>
           <ul class="hero-stats reveal">
-            <li><strong data-count="500">0</strong><span>+ אירועים</span></li>
-            <li><strong>10×15</strong><span>הדפסה מיידית</span></li>
-            <li><strong>100%</strong><span>מיתוג אישי</span></li>
+            <li><strong><span data-count="500">0</span>+</strong><span>אירועים</span></li>
+            <li><strong>10×15</strong><span>הדפסה במקום</span></li>
+            <li><strong>100%</strong><span>עיצוב בהתאמה</span></li>
           </ul>
         </div>
       </div>
-      <div class="drag-hint"><span class="hint-icon"></span>גררו כדי לסובב · גללו כדי לגלות</div>
+      <div class="drag-hint"><span class="hint-line"></span>גררו כדי לסובב את העמדה</div>
     </section>
 
-    <!-- MARQUEE -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span>חתונות</span><b>✦</b><span>בר / בת מצווה</span><b>✦</b><span>אירועי חברה</span><b>✦</b><span>כנסים</span><b>✦</b><span>ימי הולדת</span><b>✦</b><span>השקות</span><b>✦</b>
-        <span>חתונות</span><b>✦</b><span>בר / בת מצווה</span><b>✦</b><span>אירועי חברה</span><b>✦</b><span>כנסים</span><b>✦</b><span>ימי הולדת</span><b>✦</b><span>השקות</span><b>✦</b>
+        <span>חתונות</span><i>❋</i><span>בר ובת מצווה</span><i>❋</i><span>אירועי חברה</span><i>❋</i><span>חינות</span><i>❋</i><span>ימי הולדת</span><i>❋</i><span>השקות</span><i>❋</i>
+        <span>חתונות</span><i>❋</i><span>בר ובת מצווה</span><i>❋</i><span>אירועי חברה</span><i>❋</i><span>חינות</span><i>❋</i><span>ימי הולדת</span><i>❋</i><span>השקות</span><i>❋</i>
       </div>
     </div>
 
-    <!-- EXPERIENCE -->
     <section id="experience" class="scene-section" data-cam="experience">
       <div class="wrap split">
         <div class="panel">
-          <p class="eyebrow reveal"><span class="line"></span>החוויה</p>
-          <h2 class="title" data-split>לא עוד עמדת צילום.<br><em>במה.</em></h2>
-          <p class="body reveal">אנחנו מובילים בתחום עמדות הצילום החכמות לאירועים בישראל. כל אירוע מקבל חוויה אינטראקטיבית, עיצוב שנבנה סביב הקונספט שלכם, וזיכרונות שנשארים הרבה אחרי שהמוזיקה נגמרת.</p>
+          <p class="eyebrow reveal"><b>01</b> החוויה</p>
+          <h2 class="title" data-split>צילום שמרגיש<br><em>כמו רגע אמיתי.</em></h2>
+          <p class="body reveal">אנחנו מתמחים בעמדות צילום חכמות לאירועים בכל הארץ. העיצוב נבנה סביב הקונספט שלכם, והחוויה נשארת פשוטה ונעימה לכל אורח, מגיל שלוש ועד תשעים.</p>
           <div class="features">
-            <article class="feature tilt reveal">
-              <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="7"/><path d="M24 3v6M24 39v6M3 24h6M39 24h6"/></svg>
+            <article class="feature reveal">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="M24 8c-6 5-6 27 0 32M24 8c6 5 6 27 0 32M8 24h32"/></svg>
               <h3>פילטרים ורקעים</h3>
-              <p>אינטראקטיביים, טרנדיים ומותאמים לאווירה.</p>
+              <p>עדינים, מדויקים ומותאמים לאווירת האירוע.</p>
             </article>
-            <article class="feature tilt reveal">
-              <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="4" width="20" height="40" rx="4"/><path d="M21 38h6M24 12v14m-6-6 6 6 6-6"/></svg>
+            <article class="feature reveal">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="5" width="18" height="38" rx="4"/><path d="M21 37h6M24 13v13m-5-5 5 5 5-5"/></svg>
               <h3>שיתוף מיידי</h3>
-              <p>ישר לנייד, לוואטסאפ ולאינסטגרם.</p>
+              <p>התמונה עוברת לנייד, לוואטסאפ ולאינסטגרם.</p>
             </article>
-            <article class="feature tilt reveal">
-              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40 30 18M26 8l14 14-6 6-14-14z"/><path d="M8 40l4-10 6 6z"/></svg>
-              <h3>מיתוג אישי</h3>
-              <p>מסגרות, רקעים ולוגו בהתאמה מלאה.</p>
+            <article class="feature reveal">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 42V20M24 20c0-8 6-13 14-13 0 8-6 13-14 13zM24 26c0-7-5-11-12-11 0 7 5 11 12 11z"/></svg>
+              <h3>עיצוב בהתאמה</h3>
+              <p>מסגרות, צבעים ולוגו בשפה של האירוע שלכם.</p>
             </article>
-            <article class="feature tilt reveal">
-              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 18V5h22v13"/><rect x="5" y="18" width="38" height="16" rx="3"/><path d="M13 28h22v15H13z"/></svg>
-              <h3>הדפסת פרימיום</h3>
-              <p>מזכרת מוחשית תוך שניות, במקום.</p>
+            <article class="feature reveal">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 18V6h20v12"/><rect x="6" y="18" width="36" height="15" rx="3"/><path d="M14 28h20v14H14z"/></svg>
+              <h3>הדפסה במקום</h3>
+              <p>מזכרת מוחשית ביד תוך שניות.</p>
             </article>
-          </div>
-          <div class="big-count reveal">
-            <strong><span data-count="500">0</span>+</strong>
-            <span>אירועים מוצלחים בכל רחבי הארץ, מחתונות ובר מצוות ועד כנסים גדולים.</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- HOW IT WORKS -->
     <section id="how" class="scene-section" data-cam="how">
       <div class="wrap split">
         <div class="panel">
-          <p class="eyebrow reveal"><span class="line"></span>איך זה עובד</p>
-          <h2 class="title" data-split>ארבע שניות<br><em>של קסם.</em></h2>
+          <p class="eyebrow reveal"><b>02</b> איך זה עובד</p>
+          <h2 class="title" data-split>ארבעה צעדים<br><em>ותמונה ביד.</em></h2>
           <ol class="steps">
-            <li class="step reveal"><span class="step-n">01</span><div><h3>עולים על השטיח האדום</h3><p>בין עמודי הזהב וחבלי הקטיפה. כל אורח מרגיש כמו כוכב.</p></div></li>
-            <li class="step reveal"><span class="step-n">02</span><div><h3>נוגעים במסך</h3><p>בוחרים פילטר ומסגרת. ספירה לאחור: 3… 2… 1…</p></div></li>
-            <li class="step reveal"><span class="step-n">03</span><div><h3>פלאש!</h3><p>תאורת הטבעת עושה את שלה. כולם יוצאים מושלמים.</p></div></li>
-            <li class="step reveal"><span class="step-n">04</span><div><h3>לוקחים הביתה</h3><p>הדפסה איכותית ביד וקובץ דיגיטלי בנייד.</p></div></li>
+            <li class="step reveal"><span class="step-n">i</span><div><h3>ניגשים לעמדה</h3><p>היא מחכה במקום בולט באולם ומזמינה את האורחים לבוא.</p></div></li>
+            <li class="step reveal"><span class="step-n">ii</span><div><h3>נוגעים במסך</h3><p>בוחרים מסגרת ופילטר, ואז מתחילה ספירה לאחור: שלוש, שתיים, אחת.</p></div></li>
+            <li class="step reveal"><span class="step-n">iii</span><div><h3>רגע של אור</h3><p>תאורת הטבעת מאירה את כולם באור רך ומחמיא.</p></div></li>
+            <li class="step reveal"><span class="step-n">iv</span><div><h3>לוקחים הביתה</h3><p>תמונה מודפסת ביד וקובץ דיגיטלי בנייד.</p></div></li>
           </ol>
         </div>
       </div>
     </section>
 
-    <!-- TRY IT -->
     <section id="try" class="scene-section" data-cam="try">
       <div class="wrap split">
         <div class="panel try-panel">
-          <p class="eyebrow reveal"><span class="line"></span>נסו בעצמכם</p>
-          <h2 class="title" data-split>עמדו מול<br><em>המצלמה.</em></h2>
-          <p class="body reveal">הדליקו את המצלמה ותראו את עצמכם על המסך של ה־Snap Box, בתוך המודל. לחצו על צלמו אותי וקבלו תמונת פולארויד ממותגת. <small>התמונה נשארת רק אצלכם במכשיר, שום דבר לא נשלח.</small></p>
+          <p class="eyebrow reveal"><b>03</b> נסו בעצמכם</p>
+          <h2 class="title" data-split>עמדו רגע<br><em>מול העדשה.</em></h2>
+          <p class="body reveal">הפעילו את המצלמה ותראו את עצמכם על המסך של העמדה. לחצו על "צלמו אותי" ותקבלו תמונת פולארויד. <small>התמונה נשמרת רק במכשיר שלכם, שום דבר לא נשלח.</small></p>
           <div class="try-controls reveal">
-            <button class="btn btn-ghost magnetic" id="cam-toggle" type="button"><span>הפעלת מצלמה</span></button>
-            <button class="btn btn-gold btn-snap magnetic" id="snap-btn" type="button"><span>צלמו אותי</span></button>
+            <button class="btn btn-line" id="cam-toggle" type="button"><span>הפעלת מצלמה</span></button>
+            <button class="btn btn-dark" id="snap-btn" type="button"><span>צלמו אותי</span></button>
           </div>
           <div class="countdown" id="countdown" aria-live="assertive"></div>
           <div class="print-slot" id="print-slot" hidden>
             <div class="slot-mouth"></div>
-            <div class="polaroid" id="polaroid">
-              <img id="polaroid-img" alt="התמונה שצילמתם בעמדה">
-            </div>
+            <div class="polaroid" id="polaroid"><img id="polaroid-img" alt="התמונה שצילמתם בעמדה"></div>
             <div class="print-actions">
-              <a class="btn btn-gold btn-sm" id="download-btn" download="aura-snapbox.jpg" href="#">הורדה</a>
-              <button class="btn btn-ghost btn-sm" id="again-btn" type="button">עוד אחת</button>
+              <a class="btn btn-dark btn-sm" id="download-btn" download="aura-snapbox.jpg" href="#">הורדה</a>
+              <button class="btn btn-line btn-sm" id="again-btn" type="button">עוד אחת</button>
             </div>
           </div>
           <video id="cam-video" playsinline muted hidden></video>
@@ -170,108 +152,104 @@
       </div>
     </section>
 
-    <!-- PRODUCT -->
     <section id="product" class="solid" data-cam="product">
       <div class="wrap product-grid">
-        <figure class="product-frame tilt reveal">
-          <img src="assets/snapbox.webp" alt="עמדת הצילום Snap Box עם תאורת טבעת, עמודי זהב, חבלי קטיפה אדומים ושטיח אדום" loading="lazy" width="848" height="1264">
-          <figcaption>Snap Box · <em>Signature Edition</em></figcaption>
+        <figure class="product-frame reveal">
+          <img src="assets/snapbox.webp" alt="עמדת הצילום Snap Box עם תאורת טבעת וחצובת עץ" loading="lazy" width="848" height="1264">
+          <figcaption>Snap Box <em>· Signature</em></figcaption>
         </figure>
         <div class="product-copy">
-          <p class="eyebrow reveal"><span class="line"></span>הכירו את ה־Snap Box</p>
-          <h2 class="title" data-split>עוצבה כדי<br><em>שיצלמו אותה.</em></h2>
-          <p class="body reveal">חתיכת רהיט, לא עוד מכונה. העמדה שלנו נבנתה כך שתשתלב באולם הכי מעוצב ותמשוך אליה אורחים כבר מהכניסה.</p>
+          <p class="eyebrow reveal"><b>04</b> הכירו את ה־Snap Box</p>
+          <h2 class="title" data-split>רהיט מעוצב,<br><em>לא עוד מכונה.</em></h2>
+          <p class="body reveal">חומרים טבעיים, קווים נקיים וגימור עבודת יד. העמדה נראית טוב בכל תמונה, גם כשאף אחד לא עומד מולה.</p>
           <ul class="specs">
-            <li class="reveal"><b>גוף עץ</b><span>גימור טבעי חם עם פינות מעוגלות</span></li>
+            <li class="reveal"><b>עץ טבעי</b><span>גימור חם עם פינות מעוגלות</span></li>
             <li class="reveal"><b>תאורת טבעת</b><span>אור רך ואחיד כמו בסטודיו</span></li>
             <li class="reveal"><b>מסך מגע</b><span>ממשק פשוט שכל גיל מבין</span></li>
             <li class="reveal"><b>חצובת עץ</b><span>יציבה, אלגנטית וקלה להצבה</span></li>
-            <li class="reveal"><b>עמודי זהב</b><span>וחבלי קטיפה בורדו לתחושת פרימיירה</span></li>
-            <li class="reveal"><b>שטיח אדום</b><span>כי כל אורח ראוי לכניסה של כוכב</span></li>
+            <li class="reveal"><b>הדפסה מיידית</b><span>נייר צילום איכותי, 10×15</span></li>
+            <li class="reveal"><b>מיתוג מלא</b><span>מסך, מסגרות ותמונות בשפת האירוע</span></li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- PACKAGES -->
     <section id="packages" class="solid" data-cam="packages">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow reveal"><span class="line"></span>החבילות שלנו</p>
-          <h2 class="title" data-split>בחרו את <em>הבמה</em> שלכם.</h2>
+          <p class="eyebrow reveal"><b>05</b> החבילות שלנו</p>
+          <h2 class="title" data-split>בחרו את <em>החבילה</em> שלכם.</h2>
         </div>
         <div class="packages">
-          <article class="pkg tilt reveal">
-            <div class="pkg-top"><span class="pkg-tier">BASIC</span><p>לאירועים אינטימיים · עד 50 אורחים</p></div>
+          <article class="pkg reveal">
+            <div class="pkg-top"><span class="pkg-tier">Basic</span><p>לאירועים אינטימיים, עד 50 אורחים</p></div>
             <ul>
               <li>עמדת צילום אחת עם מסך מגע</li>
               <li>5 פילטרים נבחרים</li>
-              <li>הדפסות ללא הגבלה · 10×15</li>
+              <li>הדפסות ללא הגבלה, 10×15</li>
               <li>4 שעות שירות כולל הקמה ופירוק</li>
               <li>גלריה דיגיטלית עם כל התמונות</li>
             </ul>
-            <a href="#" class="btn btn-ghost pkg-cta" data-pkg="BASIC">לפרטים בוואטסאפ</a>
+            <a href="#" class="btn btn-line pkg-cta" data-pkg="BASIC">לפרטים בוואטסאפ</a>
           </article>
-          <article class="pkg pkg-featured tilt reveal">
+          <article class="pkg pkg-featured reveal">
             <span class="pkg-badge">הכי מבוקשת</span>
-            <div class="pkg-top"><span class="pkg-tier">PREMIUM</span><p>לאירועים בינוניים · עד 150 אורחים</p></div>
+            <div class="pkg-top"><span class="pkg-tier">Premium</span><p>לאירועים בינוניים, עד 150 אורחים</p></div>
             <ul>
               <li>2 עמדות צילום בפיזור אסטרטגי</li>
-              <li>15 פילטרים מתקדמים ואינטראקטיביים</li>
+              <li>15 פילטרים מתקדמים</li>
               <li>הדפסות ללא הגבלה עם מיתוג</li>
               <li>שיתוף מיידי לוואטסאפ, אינסטגרם ופייסבוק</li>
               <li>6 שעות שירות</li>
-              <li>עיצוב מסגרות ורקעים לפי נושא האירוע</li>
-              <li>קליפ קצר עם הרגעים הכי טובים</li>
+              <li>מסגרות ורקעים בעיצוב לפי האירוע</li>
+              <li>קליפ קצר עם הרגעים היפים</li>
             </ul>
-            <a href="#" class="btn btn-gold pkg-cta" data-pkg="PREMIUM">לפרטים בוואטסאפ</a>
+            <a href="#" class="btn btn-light pkg-cta" data-pkg="PREMIUM">לפרטים בוואטסאפ</a>
           </article>
-          <article class="pkg tilt reveal">
-            <div class="pkg-top"><span class="pkg-tier">LUXURY</span><p>לאירועי ענק · ללא הגבלת אורחים</p></div>
+          <article class="pkg reveal">
+            <div class="pkg-top"><span class="pkg-tier">Luxury</span><p>לאירועים גדולים, ללא הגבלת אורחים</p></div>
             <ul>
-              <li>3+ עמדות צילום בהתאמה למקום</li>
-              <li>פילטרים ללא הגבלה + AR</li>
+              <li>3 עמדות צילום ומעלה, בהתאמה למקום</li>
+              <li>פילטרים ללא הגבלה ופילטרי AR</li>
               <li>הדפסות פרימיום, מגנטים ופולארויד</li>
               <li>גלריה מקוונת מעוצבת</li>
-              <li>שירות לכל היום, ללא הגבלת שעות</li>
-              <li>מיתוג מלא כולל לוגו האירוע או החברה</li>
+              <li>שירות לכל האירוע, ללא הגבלת שעות</li>
+              <li>מיתוג מלא עם לוגו האירוע או החברה</li>
               <li>טכנאי צמוד לכל עמדה</li>
               <li>סרטון ערוך, מצגת סיכום ואלבום דיגיטלי</li>
             </ul>
-            <a href="#" class="btn btn-ghost pkg-cta" data-pkg="LUXURY">לפרטים בוואטסאפ</a>
+            <a href="#" class="btn btn-line pkg-cta" data-pkg="LUXURY">לפרטים בוואטסאפ</a>
           </article>
         </div>
         <p class="pkg-note reveal">למחירים ולפרטים נוספים: <a href="tel:0512440252">051-2440252</a></p>
       </div>
     </section>
 
-    <!-- REVIEW -->
     <section id="review" class="solid" data-cam="packages">
       <div class="wrap review-wrap">
         <div class="section-head">
-          <p class="eyebrow reveal"><span class="line"></span>הייתם אצלנו?</p>
+          <p class="eyebrow reveal"><b>06</b> הייתם אצלנו?</p>
           <h2 class="title" data-split>ספרו לנו <em>איך היה.</em></h2>
         </div>
-        <form class="glass-form reveal" id="review-form" action="https://formspree.io/f/mpwrobzk" method="POST">
+        <form class="form-card reveal" id="review-form" action="https://formspree.io/f/mpwrobzk" method="POST">
           <div class="stars" role="radiogroup" aria-label="דירוג">
             <button type="button" data-v="1" aria-label="כוכב אחד">★</button><button type="button" data-v="2" aria-label="2 כוכבים">★</button><button type="button" data-v="3" aria-label="3 כוכבים">★</button><button type="button" data-v="4" aria-label="4 כוכבים">★</button><button type="button" data-v="5" aria-label="5 כוכבים">★</button>
           </div>
           <input type="hidden" name="rating" id="rating" value="">
           <div class="field"><input type="text" id="reviewerName" name="reviewerName" placeholder=" " required><label for="reviewerName">שם מלא</label></div>
           <div class="field"><textarea id="reviewText" name="reviewText" rows="3" placeholder=" " required></textarea><label for="reviewText">מה אהבתם?</label></div>
-          <button class="btn btn-gold magnetic" type="submit"><span>שליחת ביקורת</span></button>
+          <button class="btn btn-dark" type="submit">שליחת ביקורת</button>
         </form>
       </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact" class="scene-section" data-cam="contact">
       <div class="wrap split">
         <div class="panel">
-          <p class="eyebrow reveal"><span class="line"></span>צור קשר</p>
-          <h2 class="title" data-split>השטיח האדום<br><em>כבר פרוש.</em></h2>
-          <p class="body reveal">ספרו לנו על האירוע ונחזור אליכם עם הצעה מותאמת. תאריכים בעונה נסגרים מהר.</p>
-          <form class="glass-form reveal" id="contact-form" action="https://formspree.io/f/myzjboyj" method="POST">
+          <p class="eyebrow reveal"><b>07</b> צור קשר</p>
+          <h2 class="title" data-split>בואו נתחיל<br><em>לתכנן.</em></h2>
+          <p class="body reveal">ספרו לנו על האירוע ונחזור אליכם עם הצעה מותאמת. בעונת האירועים התאריכים נתפסים מהר.</p>
+          <form class="form-card reveal" id="contact-form" action="https://formspree.io/f/myzjboyj" method="POST">
             <div class="row">
               <div class="field"><input type="text" id="c-name" name="שם" placeholder=" " required autocomplete="name"><label for="c-name">שם מלא</label></div>
               <div class="field"><input type="tel" id="c-phone" name="טלפון" placeholder=" " required autocomplete="tel"><label for="c-phone">טלפון</label></div>
@@ -282,12 +260,12 @@
             </div>
             <div class="field">
               <select id="c-type" name="סוג האירוע">
-                <option>חתונה</option><option>בר / בת מצווה</option><option>אירוע חברה</option><option>כנס</option><option>יום הולדת</option><option>אחר</option>
+                <option>חתונה</option><option>בר / בת מצווה</option><option>אירוע חברה</option><option>חינה</option><option>יום הולדת</option><option>אחר</option>
               </select>
               <label for="c-type" class="fixed">סוג האירוע</label>
             </div>
-            <div class="field"><textarea id="c-msg" name="הודעה" rows="3" placeholder=" "></textarea><label for="c-msg">כמות אורחים, מיקום, בקשות מיוחדות…</label></div>
-            <button class="btn btn-gold magnetic" type="submit"><span>שלחו פרטים</span></button>
+            <div class="field"><textarea id="c-msg" name="הודעה" rows="3" placeholder=" "></textarea><label for="c-msg">כמות אורחים, מיקום, בקשות מיוחדות</label></div>
+            <button class="btn btn-dark" type="submit">שליחת פרטים</button>
           </form>
           <div class="contact-links reveal">
             <a href="tel:0512440252" class="c-link"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>051-2440252</a>
@@ -300,14 +278,16 @@
   </main>
 
   <footer>
-    <div class="footer-word" aria-hidden="true">AURA</div>
-    <div class="wrap footer-row">
-      <div class="socials">
-        <a href="https://www.instagram.com/aura.event.il" target="_blank" rel="noopener" aria-label="אינסטגרם"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="fill"/></svg></a>
-        <a href="https://www.tiktok.com/@aura.event.il" target="_blank" rel="noopener" aria-label="טיקטוק"><svg viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.5 4.5 5 4.8"/></svg></a>
-        <a href="https://www.facebook.com/aura.event.il" target="_blank" rel="noopener" aria-label="פייסבוק"><svg viewBox="0 0 24 24"><path d="M14 21v-8h3l.5-3.5H14V7.8c0-1 .3-1.8 1.8-1.8H18V3a24 24 0 0 0-2.8-.2C12.6 2.8 11 4.3 11 7.2v2.3H8V13h3v8"/></svg></a>
+    <div class="wrap">
+      <div class="footer-word" aria-hidden="true">AURA <em>event</em></div>
+      <div class="footer-row">
+        <div class="socials">
+          <a href="https://www.instagram.com/aura.event.il" target="_blank" rel="noopener" aria-label="אינסטגרם"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="fill"/></svg></a>
+          <a href="https://www.tiktok.com/@aura.event.il" target="_blank" rel="noopener" aria-label="טיקטוק"><svg viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.5 4.5 5 4.8"/></svg></a>
+          <a href="https://www.facebook.com/aura.event.il" target="_blank" rel="noopener" aria-label="פייסבוק"><svg viewBox="0 0 24 24"><path d="M14 21v-8h3l.5-3.5H14V7.8c0-1 .3-1.8 1.8-1.8H18V3a24 24 0 0 0-2.8-.2C12.6 2.8 11 4.3 11 7.2v2.3H8V13h3v8"/></svg></a>
+        </div>
+        <p>© <span id="year">2026</span> AURA EVENT · כל הזכויות שמורות</p>
       </div>
-      <p>#AuraEvent #SnapBox · © <span id="year">2026</span> AURA EVENT · כל הזכויות שמורות</p>
     </div>
   </footer>
 
