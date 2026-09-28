@@ -21,6 +21,7 @@ const started = performance.now();
 function hideLoader() { $('#loader').classList.add('done'); document.body.classList.remove('loading'); }
 async function boot() {
   try {
+    if (new URLSearchParams(location.search).has('no3d')) throw new Error('3D turned off by ?no3d');
     const { initBooth } = await import('./booth3d.js');
     booth = await initBooth($('#booth-canvas'), { onProgress: progress });
   } catch (err) {
@@ -257,9 +258,29 @@ $$('.mode').forEach((b) => b.addEventListener('click', () => {
 
 function setIdleButton() {
   snapBtn.textContent = stream ? (mode === 'strip' ? 'צלמו סטריפ 📸' : 'צלמו מגנט 📸') : 'נסו אותי';
-  hint.textContent = stream ? 'עמדו מול המצלמה ולחצו כשאתם מוכנים' : 'בלחיצה הדפדפן יבקש הרשאה להשתמש במצלמה';
+  hint.textContent = stream ? 'עמדו מול המצלמה ולחצו כשאתם מוכנים' : 'בלחיצה נבקש את אישורכם להפעיל את המצלמה';
 }
 $$('.mode').forEach((b) => b.addEventListener('click', setIdleButton));
+
+// The site asks first in its own words; only after the visitor agrees do we trigger the browser prompt.
+const camDialog = $('#cam-dialog');
+function askCamera(retry = false) {
+  $('#cam-dialog-title').textContent = retry ? 'המצלמה עדיין לא פעילה' : 'Snap Box מבקשת גישה למצלמה';
+  $('#cam-dialog-text').textContent = retry
+    ? 'לא קיבלנו אישור להשתמש במצלמה. אפשר לנסות שוב, או לצלם עכשיו עם תמונת דוגמה ולראות איך יוצא הסטריפ.'
+    : 'כדי שתראו את עצמכם על המסך של העמדה ותוכלו לצלם סטריפ או מגנט. התמונות נשארות רק במכשיר שלכם ולא נשלחות לשום מקום.';
+  $('#cam-dialog-allow').textContent = retry ? 'נסו שוב' : 'אישור והפעלת מצלמה';
+  return new Promise((resolve) => {
+    const done = (v) => { camDialog.removeEventListener('close', onClose); camDialog.close(); resolve(v); };
+    const onClose = () => resolve('cancel');
+    camDialog.querySelectorAll('[data-act]').forEach((b) => { b.onclick = () => done(b.dataset.act); });
+    camDialog.addEventListener('close', onClose, { once: true });
+    camDialog.showModal();
+  });
+}
+async function cameraGranted() {
+  try { return (await navigator.permissions?.query({ name: 'camera' }))?.state === 'granted'; } catch { return false; }
+}
 
 async function startCam() {
   if (!navigator.mediaDevices?.getUserMedia) {
@@ -267,7 +288,7 @@ async function startCam() {
     return false;
   }
   try {
-    hint.textContent = 'אשרו את הגישה למצלמה בחלון שנפתח בדפדפן';
+    hint.textContent = 'רגע, מפעילים את המצלמה…';
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
     video.srcObject = stream;
     await video.play();
@@ -278,10 +299,10 @@ async function startCam() {
     return true;
   } catch (err) {
     stream = null;
-    const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
-    toast(denied ? 'לא ניתנה הרשאה למצלמה. אפשר לאשר אותה בהגדרות הדפדפן' : 'לא מצאנו מצלמה זמינה');
-    hint.textContent = 'בלי מצלמה נשתמש בתמונת דוגמה';
-    return false;
+    const noDevice = err && (err.name === 'NotFoundError' || err.name === 'OverconstrainedError');
+    if (noDevice) toast('לא מצאנו מצלמה במכשיר הזה');
+    hint.textContent = 'בלי מצלמה נצלם עם תמונת דוגמה';
+    return noDevice ? 'nodevice' : false;
   }
 }
 function stopCam() {
@@ -373,8 +394,13 @@ function composeStrip(frames) {
 async function snap() {
   if (busy) return;
   if (!stream) {
-    if (await startCam()) await sleep(900);
-    else if (!confirm('לצלם עם תמונת דוגמה במקום מצלמה?')) return;
+    let choice = (await cameraGranted()) ? 'allow' : await askCamera();
+    while (choice === 'allow') {
+      const ok = await startCam();
+      if (ok === true) { await sleep(900); break; }
+      choice = ok === 'nodevice' ? 'sample' : await askCamera(true);
+    }
+    if (choice === 'cancel') { setIdleButton(); return; }
   }
   busy = true; snapBtn.disabled = true;
   $$('.mode').forEach((b) => { b.disabled = true; });

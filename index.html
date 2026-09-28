@@ -130,7 +130,7 @@
         <div class="panel try-panel">
           <p class="eyebrow reveal"><b>02</b> נסו אותי</p>
           <h2 class="title" data-split>עמדו רגע<br><em>מול העדשה.</em></h2>
-          <p class="body reveal">ככה מרגישים ליד העמדה. בחרו סטריפ או מגנט, לחצו על "נסו אותי" והדפדפן יבקש אישור למצלמה. <small>התמונות נשמרות רק במכשיר שלכם. שום דבר לא נשלח או נשמר אצלנו.</small></p>
+          <p class="body reveal">ככה מרגישים ליד העמדה. בחרו סטריפ או מגנט, לחצו על "נסו אותי" ואשרו את השימוש במצלמה. <small>התמונות נשמרות רק במכשיר שלכם. שום דבר לא נשלח או נשמר אצלנו.</small></p>
 
           <div class="try-box reveal">
             <div class="mode-switch" role="radiogroup" aria-label="סוג התמונה">
@@ -150,7 +150,7 @@
             </div>
 
             <button class="btn btn-dark btn-wide" id="snap-btn" type="button">נסו אותי</button>
-            <p class="try-hint" id="try-hint">בלחיצה הדפדפן יבקש הרשאה להשתמש במצלמה</p>
+            <p class="try-hint" id="try-hint">בלחיצה נבקש את אישורכם להפעיל את המצלמה</p>
           </div>
 
           <div class="print-slot" id="print-slot" hidden>
@@ -289,6 +289,17 @@
     <p>בעצם הכניסה לאתר אישרת את השימוש בעוגיות (Cookies) לשמירת העדפות הנגישות שבחרת ואת אישור הסכמה זה. פרטים ב<a href="privacy.html">מדיניות הפרטיות</a>.</p>
     <button type="button" class="btn btn-light btn-sm" id="cookie-ok">הבנתי, אישרתי</button>
   </div>
+
+  <dialog class="cam-dialog" id="cam-dialog" aria-labelledby="cam-dialog-title">
+    <button type="button" class="cam-dialog-close" data-act="cancel" aria-label="סגירה">×</button>
+    <div class="cam-dialog-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M6 16a4 4 0 0 1 4-4h5l3-4h12l3 4h5a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><circle cx="24" cy="26" r="8"/></svg></div>
+    <h3 id="cam-dialog-title">Snap Box מבקשת גישה למצלמה</h3>
+    <p id="cam-dialog-text">כדי שתראו את עצמכם על המסך של העמדה ותוכלו לצלם סטריפ או מגנט. התמונות נשארות רק במכשיר שלכם ולא נשלחות לשום מקום.</p>
+    <div class="cam-dialog-actions">
+      <button type="button" class="btn btn-dark" data-act="allow" id="cam-dialog-allow">אישור והפעלת מצלמה</button>
+      <button type="button" class="btn btn-line" data-act="sample">צלמו עם תמונת דוגמה</button>
+    </div>
+  </dialog>
 
   <div class="countdown" id="countdown" aria-hidden="true"></div>
   <div id="toast" role="status" aria-live="polite"></div>

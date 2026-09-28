@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 const isLite = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -37,7 +40,8 @@ function tex(c, srgb = true) {
 }
 
 function oakTexture() {
-  const [c, g] = canvas(1024, 1024);
+  const [c, g] = canvas(2048, 2048);
+  g.scale(2, 2);
   const grd = g.createLinearGradient(0, 0, 0, 1024);
   grd.addColorStop(0, '#cdb698'); grd.addColorStop(.5, '#d8c3a5'); grd.addColorStop(1, '#c8b092');
   g.fillStyle = grd; g.fillRect(0, 0, 1024, 1024);
@@ -126,24 +130,6 @@ function blobTexture(alpha = .4) {
   return tex(c);
 }
 
-function plumeTexture() {
-  const [c, g] = canvas(128, 512);
-  g.clearRect(0, 0, 128, 512);
-  for (let i = 0; i < 1400; i++) {
-    const y = 40 + Math.random() * 460;
-    const t = (y - 40) / 460;
-    const spread = Math.sin(Math.PI * Math.pow(1 - t, .8)) * 58 + 4;
-    const dir = Math.random() > .5 ? 1 : -1;
-    const len = rand(.3, 1) * spread;
-    g.strokeStyle = `rgba(${240 + Math.random() * 15 | 0},${226 + Math.random() * 20 | 0},${196 + Math.random() * 25 | 0},${rand(.25, .7)})`;
-    g.lineWidth = rand(.5, 1.4);
-    g.beginPath(); g.moveTo(64, y);
-    g.quadraticCurveTo(64 + dir * len * .5, y - len * .25, 64 + dir * len, y - len * .7);
-    g.stroke();
-  }
-  return tex(c);
-}
-
 function brassFill(g, y0, y1) {
   const grd = g.createLinearGradient(0, y0, 0, y1);
   grd.addColorStop(0, '#6f5127'); grd.addColorStop(.4, '#c9a266'); grd.addColorStop(.6, '#9c7a42'); grd.addColorStop(1, '#5f4520');
@@ -188,6 +174,95 @@ function sideTexture(top, bottom, bigLetter) {
   return tex(c);
 }
 
+// Height (luminance) -> tangent-space normal map, for real relief in grain, stone pores and veins.
+function normalMapFrom(src, strength = 2, invert = false) {
+  const w = src.width, h = src.height;
+  const d = src.getContext('2d').getImageData(0, 0, w, h).data;
+  const H = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    const a = d[i * 4 + 3] / 255;
+    const l = (d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11) / 255;
+    H[i] = (invert ? 1 - l : l) * a;
+  }
+  const [c, g] = canvas(w, h);
+  const out = g.createImageData(w, h);
+  const at = (x, y) => H[((y + h) % h) * w + ((x + w) % w)];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const dx = (at(x + 1, y) - at(x - 1, y)) * strength;
+      const dy = (at(x, y + 1) - at(x, y - 1)) * strength;
+      const len = Math.hypot(dx, dy, 1);
+      const o = (y * w + x) * 4;
+      out.data[o] = (-dx / len * .5 + .5) * 255;
+      out.data[o + 1] = (dy / len * .5 + .5) * 255;
+      out.data[o + 2] = (1 / len * .5 + .5) * 255;
+      out.data[o + 3] = 255;
+    }
+  }
+  g.putImageData(out, 0, 0);
+  const t = tex(c, false);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+function leafTexture() {
+  const [c, g] = canvas(256, 256);
+  const grd = g.createLinearGradient(0, 256, 0, 0);
+  grd.addColorStop(0, '#dfe6d6'); grd.addColorStop(.5, '#f4f7ef'); grd.addColorStop(1, '#e3eadb');
+  g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+  g.strokeStyle = 'rgba(255,255,250,.9)'; g.lineWidth = 3;
+  g.beginPath(); g.moveTo(128, 256); g.lineTo(128, 0); g.stroke();
+  g.lineWidth = 1.2; g.strokeStyle = 'rgba(255,255,250,.55)';
+  for (let y = 230; y > 20; y -= 26) {
+    g.beginPath(); g.moveTo(128, y); g.quadraticCurveTo(170, y - 18, 230, y - 40); g.stroke();
+    g.beginPath(); g.moveTo(128, y); g.quadraticCurveTo(86, y - 18, 26, y - 40); g.stroke();
+  }
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(90,110,80,${Math.random() * .08})`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2); }
+  return c;
+}
+
+// Soft warm "photo studio" surroundings used only for reflections and image-based light.
+function studioEnvironment() {
+  const env = new THREE.Scene();
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(40, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false,
+    vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `varying vec3 vP;
+      void main(){
+        float h = vP.y;
+        vec3 top = vec3(1.0, 0.975, 0.94), hor = vec3(0.92, 0.87, 0.79), bot = vec3(0.42, 0.37, 0.31);
+        vec3 c = h > 0.0 ? mix(hor, top, pow(h, 0.55)) : mix(hor, bot, pow(-h, 0.45));
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  }));
+  env.add(dome);
+  const box = (w, h, pos, k, color) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(k), side: THREE.DoubleSide }));
+    m.position.set(...pos); m.lookAt(0, 1.5, 0); env.add(m);
+  };
+  box(16, 10, [-14, 16, 13], 7, 0xfff0d8);   // big warm window, same side as the sun
+  box(9, 7, [16, 7, 8], 2.4, 0xffffff);      // cool fill
+  box(24, 2.5, [0, 9, -18], 3.2, 0xffe6c4);  // long rim strip behind
+  box(6, 6, [0, 22, 0], 2, 0xfffaf0);        // overhead
+  return env;
+}
+
+const FinishShader = {
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime; uniform vec2 uRes; varying vec2 vUv;
+    float n(vec2 c){ return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec2 d = vUv - 0.5;
+      float ca = dot(d, d) * 0.004;
+      vec3 col = vec3(texture2D(tDiffuse, vUv + d * ca).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - d * ca).b);
+      float vig = smoothstep(1.05, 0.3, length(d * vec2(1.0, 0.85)));
+      col *= mix(0.9, 1.0, vig);
+      col += (n(vUv * uRes + fract(uTime) * 91.7) - 0.5) * 0.018;
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+};
+
 /* ---------------- botanical geometry ---------------- */
 function leafGeometry(width, length) {
   const s = new THREE.Shape();
@@ -200,37 +275,64 @@ function leafGeometry(width, length) {
     const x = p.getX(i), y = p.getY(i);
     p.setZ(i, -x * x * 1.4 + Math.sin(y / length * Math.PI) * .08 * length);
   }
+  const uv = geo.attributes.uv;
+  for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) / (2 * width) + .5, p.getY(i) / length);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function petalGeometry() {
+  const geo = new THREE.PlaneGeometry(1, 1, 8, 8);
+  geo.translate(0, .5, 0);
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i); const y = p.getY(i);
+    x *= .25 + .75 * Math.sin(Math.PI * Math.min(1, y * .92 + .08));
+    const z = -x * x * 1.6 + y * y * .35;
+    p.setXYZ(i, x, y, z);
+  }
   geo.computeVertexNormals();
   return geo;
 }
 
 function roseGeometry() {
-  const geo = new THREE.IcosahedronGeometry(1, 4);
-  const p = geo.attributes.position, v = new THREE.Vector3();
-  for (let i = 0; i < p.count; i++) {
-    v.fromBufferAttribute(p, i);
-    const a = Math.atan2(v.z, v.x);
-    const swirl = Math.sin(a * 5 + v.y * 9) * .07 + Math.sin(a * 3 - v.y * 5) * .05;
-    v.multiplyScalar(1 + swirl);
-    v.y *= v.y > 0 ? .72 : .9;
-    if (v.y > .45) v.y = .45 + (v.y - .45) * .3;
-    p.setXYZ(i, v.x, v.y, v.z);
+  const base = petalGeometry();
+  const parts = [];
+  const N = 22, m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  for (let i = 0; i < N; i++) {
+    const t = i / (N - 1);
+    const g = base.clone();
+    const size = .38 + t * .75;
+    const open = .08 + Math.pow(t, 1.4) * 1.25;        // inner petals wrap, outer ones open up
+    const r = .04 + t * .32;
+    const ang = i * 2.39996;                          // golden angle
+    e.set(-open, 0, 0, 'XYZ');
+    q.setFromEuler(e);
+    m.compose(new THREE.Vector3(0, 0, r), q, new THREE.Vector3(size * (.9 + t * .35), size, size));
+    g.applyMatrix4(m);
+    g.applyMatrix4(new THREE.Matrix4().makeRotationY(ang));
+    g.translate(0, -t * .18, 0);
+    const shade = .9 + t * .1;                        // deeper tone at the heart of the bloom
+    const col = new Float32Array(g.attributes.position.count * 3).fill(shade);
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    parts.push(g);
   }
-  geo.computeVertexNormals();
-  return geo;
+  const rose = mergeGeometries(parts);
+  rose.computeVertexNormals();
+  return rose;
 }
 
 /* ---------------- scene ---------------- */
 export async function initBooth(canvasEl, { onProgress } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, powerPreference: 'high-performance' });
   if (!renderer.getContext()) throw new Error('no webgl');
-  const pr = Math.min(window.devicePixelRatio || 1, isLite ? 1.5 : 1.75);
+  let pr = Math.min(window.devicePixelRatio || 1, isLite ? 1.5 : 2);
   renderer.setPixelRatio(pr);
   renderer.setSize(innerWidth, innerHeight, false);
   renderer.toneMapping = THREE.NeutralToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 0.92;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.VSMShadowMap;
 
   onProgress?.(15);
   await Promise.race([
@@ -246,20 +348,25 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   scene.background = new THREE.Color(BG);
   scene.fog = new THREE.Fog(BG, 13, 32);
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.55;
+  scene.environment = pmrem.fromScene(studioEnvironment(), 0.02).texture;
+  scene.environmentIntensity = 0.38;
 
   const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 80);
   const up = new THREE.Vector3(0, 1, 0);
 
   /* ---- materials ---- */
   const oak = oakTexture();
-  const oakMat = new THREE.MeshPhysicalMaterial({ map: oak, roughness: .55, clearcoat: .18, clearcoatRoughness: .5, sheen: .25, sheenColor: new THREE.Color(0xfff0d8) });
+  const oakN = normalMapFrom(oak.image, 3.2, true);
+  const oakMat = new THREE.MeshPhysicalMaterial({
+    map: oak, normalMap: oakN, normalScale: new THREE.Vector2(.55, .55), roughness: .48,
+    clearcoat: .45, clearcoatRoughness: .16, sheen: .3, sheenRoughness: .6, sheenColor: new THREE.Color(0xfff0d8),
+  });
   const legOak = oak.clone(); legOak.rotation = Math.PI / 2; legOak.center.set(.5, .5); legOak.repeat.set(.3, 1);
-  const legMat = new THREE.MeshPhysicalMaterial({ map: legOak, roughness: .5, clearcoat: .2 });
-  const frameMat = new THREE.MeshPhysicalMaterial({ map: oak, color: 0xe9d8bd, roughness: .5, clearcoat: .25 });
+  const legN = oakN.clone(); legN.rotation = Math.PI / 2; legN.center.set(.5, .5); legN.repeat.set(.3, 1);
+  const legMat = new THREE.MeshPhysicalMaterial({ map: legOak, normalMap: legN, normalScale: new THREE.Vector2(.4, .4), roughness: .45, clearcoat: .4, clearcoatRoughness: .18 });
+  const frameMat = new THREE.MeshPhysicalMaterial({ map: oak, normalMap: oakN, normalScale: new THREE.Vector2(.4, .4), color: 0xe9d8bd, roughness: .45, clearcoat: .5, clearcoatRoughness: .14 });
   const graphite = new THREE.MeshStandardMaterial({ color: 0x2b2926, metalness: .55, roughness: .45 });
-  const brass = new THREE.MeshStandardMaterial({ color: 0xb8955a, metalness: 1, roughness: .32 });
+  const brass = new THREE.MeshPhysicalMaterial({ color: 0xc19d5e, metalness: 1, roughness: .26, clearcoat: .3, clearcoatRoughness: .2 });
   const engraved = (map) => new THREE.MeshStandardMaterial({ map, transparent: true, metalness: .6, roughness: .4, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
 
   /* ---- booth ---- */
@@ -357,11 +464,14 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   });
 
   /* ---- floor, rug, shadows ---- */
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 90), new THREE.MeshStandardMaterial({ map: travertineTexture(), roughness: .62, metalness: 0 }));
+  const trav = travertineTexture();
+  const travN = normalMapFrom(trav.image, 2.4, true); travN.repeat.copy(trav.repeat);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 90), new THREE.MeshPhysicalMaterial({ map: trav, normalMap: travN, normalScale: new THREE.Vector2(.5, .5), roughness: .5, clearcoat: .25, clearcoatRoughness: .35 }));
   floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
   scene.add(floor);
 
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(1.2, 96), new THREE.MeshStandardMaterial({ map: juteTexture(), roughness: 1, transparent: true }));
+  const jute = juteTexture();
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(1.2, 128), new THREE.MeshStandardMaterial({ map: jute, normalMap: normalMapFrom(jute.image, 4, true), normalScale: new THREE.Vector2(1.2, 1.2), roughness: 1, transparent: true }));
   rug.rotation.x = -Math.PI / 2; rug.position.y = .004; rug.receiveShadow = true;
   scene.add(rug);
 
@@ -385,7 +495,9 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   scene.add(archBlob);
 
   const leafA = leafGeometry(.32, 1), leafB = leafGeometry(.55, 1);
-  const leafMat = new THREE.MeshStandardMaterial({ side: THREE.DoubleSide, roughness: .75, metalness: 0 });
+  const leafC = leafTexture();
+  const leafMap = tex(leafC);
+  const leafMat = new THREE.MeshPhysicalMaterial({ map: leafMap, normalMap: normalMapFrom(leafC, 3), normalScale: new THREE.Vector2(.6, .6), side: THREE.DoubleSide, roughness: .55, sheen: .45, sheenRoughness: .5, sheenColor: new THREE.Color(0xdfe8d4) });
   const greens = [0x7f8f6f, 0x93a283, 0x6a7b5c, 0xa7b499, 0x5b6a4f, 0x8a9a86].map((c) => new THREE.Color(c));
   const clusters = [
     { from: 188, to: 300, leaves: isLite ? 260 : 520, roses: 11, center: 238 },
@@ -427,12 +539,12 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   leavesA.count = ia; leavesB.count = ib;
   arch.add(leavesA, leavesB);
 
-  const roseMat = new THREE.MeshStandardMaterial({ roughness: .8, metalness: 0 });
+  const roseMat = new THREE.MeshPhysicalMaterial({ vertexColors: true, emissive: 0x3a2a24, emissiveIntensity: .35, side: THREE.DoubleSide, roughness: .62, sheen: .8, sheenRoughness: .45, sheenColor: new THREE.Color(0xfff2ec) });
   const roses = new THREE.InstancedMesh(roseGeometry(), roseMat, roseSpots.length);
-  const bloomColors = [0xf6efe4, 0xf1e4d6, 0xe9cfc2, 0xdcb4a4, 0xf8f3ec].map((c) => new THREE.Color(c));
+  const bloomColors = [0xf8efe6, 0xf2d6cb, 0xe8bfb1, 0xdca597, 0xfaf4ee].map((c) => new THREE.Color(c));
   roseSpots.forEach((pt, i) => {
-    e.set(rand(.6, 1.3), rand(0, 6.28), rand(-.4, .4)); q.setFromEuler(e);
-    const sc = rand(.055, .09); s3.set(sc, sc, sc);
+    e.set(rand(1.1, 1.7), rand(0, 6.28), rand(-.35, .35)); q.setFromEuler(e);
+    const sc = rand(.075, .11); s3.set(sc, sc, sc);
     m4.compose(pt, q, s3);
     roses.setMatrixAt(i, m4);
     roses.setColorAt(i, bloomColors[i % bloomColors.length]);
@@ -452,9 +564,13 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   arch.add(dots);
 
   /* ---- vases with pampas ---- */
-  const plumeTex = plumeTexture();
-  const plumeMat = new THREE.MeshStandardMaterial({ map: plumeTex, alphaTest: .18, side: THREE.DoubleSide, roughness: 1, color: 0xfff6e6 });
-  const plumeGeo = new THREE.PlaneGeometry(.24, .58); plumeGeo.translate(0, .29, 0);
+  // pampas plumes: hundreds of fine opaque fibres per plume (plays well with AO and depth of field)
+  const fibreGeo = new THREE.PlaneGeometry(.022, .16, 1, 3);
+  fibreGeo.translate(0, .075, 0);
+  { const fp = fibreGeo.attributes.position; for (let i = 0; i < fp.count; i++) { const y = fp.getY(i) / .16; fp.setX(i, fp.getX(i) * (1 - y * .7)); fp.setZ(i, y * y * .02); } fibreGeo.computeVertexNormals(); }
+  const fibreMat = new THREE.MeshPhysicalMaterial({ side: THREE.DoubleSide, roughness: .85, sheen: 1, sheenRoughness: .4, sheenColor: new THREE.Color(0xfff6e4) });
+  const fibreSpots = [];
+  const fibreCols = [0xe8d5b0, 0xdcc59c, 0xf1e3c6, 0xd6bd92].map((c) => new THREE.Color(c));
   const stemMat = new THREE.MeshStandardMaterial({ color: 0xc9b58f, roughness: .9 });
   const vaseProfile = [[0, 0], [.1, 0], [.15, .06], [.19, .22], [.2, .38], [.16, .56], [.09, .7], [.075, .78], [.09, .8]]
     .map(([x, y]) => new THREE.Vector2(x, y));
@@ -476,33 +592,56 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
       const st = new THREE.Mesh(new THREE.TubeGeometry(curve, 20, .0045, 5, false), stemMat);
       g.add(st);
       const tan = curve.getTangent(1);
-      const plume = new THREE.Group();
-      plume.position.copy(top);
-      plume.quaternion.setFromUnitVectors(up, tan);
-      for (let k = 0; k < 5; k++) {
-        const pm = new THREE.Mesh(plumeGeo, plumeMat);
-        pm.rotation.y = k * Math.PI / 5 + rand(-.2, .2);
-        pm.rotation.x = rand(-.12, .12);
-        pm.scale.setScalar(rand(.85, 1.2));
-        plume.add(pm);
+      const plumeQ = new THREE.Quaternion().setFromUnitVectors(up, tan);
+      const L = rand(.42, .6);
+      for (let k = 0; k < (isLite ? 240 : 480); k++) {
+        const t = Math.pow(Math.random(), .8);               // position along the plume
+        const spread = Math.sin(Math.PI * Math.min(1, (1 - t) * 1.05 + .05)) * 1.05 + .12;
+        const a = Math.random() * Math.PI * 2;
+        const local = new THREE.Vector3(0, t * L, 0);
+        const qq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(Math.cos(a), 0, Math.sin(a)), spread * rand(.7, 1.1));
+        const pos = local.applyQuaternion(plumeQ).add(top);
+        const sc = rand(.6, 1.25) * (1.1 - t * .5);
+        fibreSpots.push({ group: g, pos, q: plumeQ.clone().multiply(qq), sc });
       }
-      g.add(plume);
     }
     scene.add(g);
     return g;
   }
+  function flushFibres() {
+    const groups = [...new Set(fibreSpots.map((f) => f.group))];
+    groups.forEach((grp) => {
+      const list = fibreSpots.filter((f) => f.group === grp);
+      const im = new THREE.InstancedMesh(fibreGeo, fibreMat, list.length);
+      list.forEach((f, i) => {
+        m4.compose(f.pos, f.q, s3.set(f.sc, f.sc, f.sc));
+        im.setMatrixAt(i, m4);
+        im.setColorAt(i, fibreCols[i % fibreCols.length]);
+      });
+      im.castShadow = true;
+      grp.add(im);
+    });
+  }
   vase(-1.95, -.45, 1.0, 0xe4dacb, 8);
   vase(-1.35, -1.75, .78, 0xc8a88e, 5);
+  flushFibres();
 
   /* ---- lights ---- */
-  scene.add(new THREE.HemisphereLight(0xfbf6ee, 0xcfc1a8, .8));
-  const sun = new THREE.DirectionalLight(0xfff3e4, 3.2);
+  scene.add(new THREE.HemisphereLight(0xfbf6ee, 0xbfae92, .45));
+  const sun = new THREE.DirectionalLight(0xfff1de, 3.6);
   sun.position.set(-3.8, 7.5, 4.8);
   sun.castShadow = true;
   sun.shadow.mapSize.set(isLite ? 1024 : 2048, isLite ? 1024 : 2048);
   Object.assign(sun.shadow.camera, { left: -4.5, right: 4.5, top: 4.5, bottom: -4.5, near: 1, far: 22 });
-  sun.shadow.bias = -.0004; sun.shadow.normalBias = .02;
+  sun.shadow.bias = -.0002; sun.shadow.normalBias = .015;
+  sun.shadow.radius = isLite ? 4 : 7; sun.shadow.blurSamples = isLite ? 8 : 16;
   scene.add(sun);
+  const rim = new THREE.DirectionalLight(0xffe2b8, 1.6);
+  rim.position.set(2.5, 5, -6);
+  scene.add(rim);
+  const bounce = new THREE.PointLight(0xfff0dc, 3, 6, 2);
+  bounce.position.set(1.2, .6, 2.2);
+  scene.add(bounce);
   const ringLight = new THREE.SpotLight(0xfff6ea, 1.2, 8, .9, .9, 1.5);
   ringLight.position.set(0, ringY, .3); ringLight.target.position.set(0, .8, 3.5);
   scene.add(ringLight, ringLight.target);
@@ -536,13 +675,47 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   onProgress?.(70);
 
   /* ---- post ---- */
-  const composer = new EffectComposer(renderer);
+  // MSAA half-float target: clean edges and smooth gradients through the whole chain
+  const rt = new THREE.WebGLRenderTarget(innerWidth * pr, innerHeight * pr, { type: THREE.HalfFloatType, samples: isLite ? 0 : 4 });
+  const composer = new EffectComposer(renderer, rt);
   composer.setPixelRatio(pr);
   composer.setSize(innerWidth, innerHeight);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .28, .5, 1.02);
+  let gtao = null, bokeh = null;
+  if (!isLite) {
+    gtao = new GTAOPass(scene, camera, innerWidth, innerHeight);
+    gtao.output = GTAOPass.OUTPUT.Default;
+    gtao.blendIntensity = .9;
+    gtao.updateGtaoMaterial({ radius: .35, distanceExponent: 1.4, thickness: 1.2, scale: 1.1, samples: 16 });
+    gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
+    composer.addPass(gtao);
+  }
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .3, .55, 1.0);
   composer.addPass(bloom);
+  if (!isLite) {
+    bokeh = new BokehPass(scene, camera, { focus: 8, aperture: .00055, maxblur: .005 });
+    composer.addPass(bokeh);
+  }
   composer.addPass(new OutputPass());
+  const finish = new ShaderPass(FinishShader);
+  finish.uniforms.uRes.value.set(innerWidth, innerHeight);
+  composer.addPass(finish);
+
+  // keep it smooth on weaker GPUs: shed the heaviest passes if frames run long
+  const perf = { frames: 0, time: 0, level: 0 };
+  function adaptQuality(dt) {
+    if (perf.level >= 3) return;
+    perf.frames++; perf.time += dt;
+    if (perf.frames < 90) return;
+    const avg = perf.time / perf.frames;
+    perf.frames = 0; perf.time = 0;
+    if (avg < 1 / 40) return;
+    perf.level++;
+    if (perf.level === 1 && bokeh) bokeh.enabled = false;
+    else if (perf.level === 2 && gtao) gtao.enabled = false;
+    else { pr = Math.max(1, pr * .75); renderer.setPixelRatio(pr); composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight); }
+  }
+  const boothWorld = new THREE.Vector3();
 
   /* ---- screen content ---- */
   const photo = new Image();
@@ -666,6 +839,12 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
     bloom.strength = .28 + flashAmt * .9;
     updatePetals(time, dt);
     drawScreen(time);
+    if (bokeh && bokeh.enabled) {
+      body.getWorldPosition(boothWorld);
+      bokeh.uniforms.focus.value = camera.position.distanceTo(boothWorld);
+    }
+    finish.uniforms.uTime.value = time;
+    adaptQuality(dt);
     composer.render();
     requestAnimationFrame(loop);
   }
@@ -675,6 +854,7 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight, false);
     composer.setSize(innerWidth, innerHeight);
+    finish.uniforms.uRes.value.set(innerWidth, innerHeight);
     measure();
   });
 
