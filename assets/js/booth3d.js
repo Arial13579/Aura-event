@@ -303,7 +303,7 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
   const side = new THREE.Mesh(new THREE.PlaneGeometry(.6, .6), engraved(sideTexture('NAP', 'BOX', 'S')));
   side.position.set(BW / 2 + .0015, BY, 0); side.rotation.y = Math.PI / 2;
   booth.add(side);
-  const side2 = new THREE.Mesh(new THREE.PlaneGeometry(.6, .6), engraved(sideTexture('AURA', 'event')));
+  const side2 = new THREE.Mesh(new THREE.PlaneGeometry(.6, .6), engraved(sideTexture('SNAP', 'box')));
   side2.position.set(-BW / 2 - .0015, BY, 0); side2.rotation.y = -Math.PI / 2;
   booth.add(side2);
 
@@ -621,7 +621,7 @@ export async function initBooth(canvasEl, { onProgress } = {}) {
 
   // drag to turn the booth
   let spin = 0, spinVel = 0, dragging = false, lastX = 0;
-  const dragOk = (el) => !el.closest('a, button, input, textarea, select, label, form, .marquee, header, .pkg, .product-frame, .features');
+  const dragOk = (el) => !el.closest('a, button, input, textarea, select, label, form, header, .gallery, .try-box, .print-slot, .faq, .reviews-grid, .a11y, #cookie');
   addEventListener('pointerdown', (e) => { if (!dragOk(e.target)) return; dragging = true; lastX = e.clientX; });
   addEventListener('pointermove', (e) => {
     if (!dragging) return;
