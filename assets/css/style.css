@@ -54,7 +54,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- Stage ---------- */
 #stage { position: fixed; inset: 0; z-index: 0; }
 #booth-canvas { width: 100%; height: 100%; display: block; }
-.no-webgl #stage { background: url('../snapbox.webp') 12% center / auto 90% no-repeat var(--linen); }
+.no-webgl #stage { background: url('../render/hero.webp') center / cover no-repeat #efe9df; }
 #flash { position: fixed; inset: 0; z-index: 150; background: #fffdf8; opacity: 0; pointer-events: none; }
 #flash.on { animation: flash 1s ease-out; }
 @keyframes flash { 0% { opacity: 0; } 8% { opacity: .95; } 100% { opacity: 0; } }

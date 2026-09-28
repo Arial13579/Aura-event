@@ -264,12 +264,18 @@ $$('.mode').forEach((b) => b.addEventListener('click', setIdleButton));
 
 // The site asks first in its own words; only after the visitor agrees do we trigger the browser prompt.
 const camDialog = $('#cam-dialog');
-function askCamera(retry = false) {
-  $('#cam-dialog-title').textContent = retry ? 'המצלמה עדיין לא פעילה' : 'Snap Box מבקשת גישה למצלמה';
-  $('#cam-dialog-text').textContent = retry
-    ? 'לא קיבלנו אישור להשתמש במצלמה. אפשר לנסות שוב, או לצלם עכשיו עם תמונת דוגמה ולראות איך יוצא הסטריפ.'
-    : 'כדי שתראו את עצמכם על המסך של העמדה ותוכלו לצלם סטריפ או מגנט. התמונות נשארות רק במכשיר שלכם ולא נשלחות לשום מקום.';
-  $('#cam-dialog-allow').textContent = retry ? 'נסו שוב' : 'אישור והפעלת מצלמה';
+// Embedded previews (an iframe without camera permission) can never open the camera.
+const cameraEmbedBlocked = () => window.self !== window.top && document.featurePolicy && !document.featurePolicy.allowsFeature('camera');
+function askCamera(mode = 'ask') {
+  const texts = {
+    ask: ['Snap Box מבקשת גישה למצלמה', 'כדי שתראו את עצמכם על המסך של העמדה ותוכלו לצלם סטריפ או מגנט. התמונות נשארות רק במכשיר שלכם ולא נשלחות לשום מקום.', 'אישור והפעלת מצלמה'],
+    retry: ['המצלמה עדיין לא פעילה', 'לא קיבלנו אישור להשתמש במצלמה. אפשר לנסות שוב, או לצלם עכשיו עם תמונת דוגמה ולראות איך יוצא הסטריפ.', 'נסו שוב'],
+    embed: ['המצלמה זמינה באתר עצמו', 'בתצוגה המקדימה הזו אין גישה למצלמה. באתר של Snap Box היא נפתחת רגיל. בינתיים אפשר לצלם עם תמונת דוגמה.', ''],
+  }[mode];
+  $('#cam-dialog-title').textContent = texts[0];
+  $('#cam-dialog-text').textContent = texts[1];
+  $('#cam-dialog-allow').textContent = texts[2];
+  $('#cam-dialog-allow').hidden = mode === 'embed';
   return new Promise((resolve) => {
     const done = (v) => { camDialog.removeEventListener('close', onClose); camDialog.close(); resolve(v); };
     const onClose = () => resolve('cancel');
@@ -394,11 +400,11 @@ function composeStrip(frames) {
 async function snap() {
   if (busy) return;
   if (!stream) {
-    let choice = (await cameraGranted()) ? 'allow' : await askCamera();
+    let choice = cameraEmbedBlocked() ? await askCamera('embed') : (await cameraGranted()) ? 'allow' : await askCamera();
     while (choice === 'allow') {
       const ok = await startCam();
       if (ok === true) { await sleep(900); break; }
-      choice = ok === 'nodevice' ? 'sample' : await askCamera(true);
+      choice = ok === 'nodevice' ? 'sample' : await askCamera(cameraEmbedBlocked() ? 'embed' : 'retry');
     }
     if (choice === 'cancel') { setIdleButton(); return; }
   }
