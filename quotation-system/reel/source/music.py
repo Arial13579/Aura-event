@@ -205,11 +205,15 @@ def chime(freqs, gap=.11, dec=5.5, length=1.0):
 
 place(ui, chime([1175, 1568]), 1.0, .11, .2)          # notification on screen
 place(ui, chime([1175, 1568]), 1.5, .09, -.2)
-for t in (6.45, 7.2, 7.8, 8.25, 9.15, 14.4, 21.75, 22.6): place(ui, tap(), t, .2)
+SFXM = len(sys.argv) > 2 and sys.argv[2] == 'sfx'
+for t in (6.45, 7.2, 7.8, 8.25, 9.15, 14.4, 21.75, 22.6): place(ui, tap(), t, .38 if SFXM else .2)
 for a, b in ((6.55, 7.1), (7.3, 7.7), (7.9, 8.15), (8.35, 9.05), (9.25, 9.6)):
     t = a
-    while t < b: place(ui, key_tick(), t, .09, rng.uniform(-.15, .15)); t += rng.uniform(.06, .09)
-for t in (14.95, 18.85, 26.95): place(ui, swipe(), t, .09)
+    while t < b: place(ui, key_tick(), t, .2 if SFXM else .09, rng.uniform(-.15, .15)); t += rng.uniform(.06, .09)
+for t in (14.95, 18.85, 26.95): place(ui, swipe(), t, .2 if SFXM else .09)
+if SFXM:
+    for t in (30.2, 33.9): place(ui, swipe(.3), t, .16)
+    place(ui, chime([1175, 1568]), 37.45, .08)
 place(ui, chime([1319], length=.9, dec=6), 12.95, .07)  # price ready
 place(ui, sent(), 15.35, .16)                           # message sent
 place(ui, chime([1568, 2093], gap=.1), 17.1, .1, -.15)  # reply received
@@ -221,12 +225,13 @@ place(ui, chime([1976], length=.6, dec=8), 28.0, .07)   # status signed
 music = keys * (0.75 + .25 * sc)[:, None] + bass * sc[:, None] + drums + pad * sc[:, None] + lead
 music = reverb(music, .22)
 mix = music + reverb(ui, .1)
+if len(sys.argv) > 2 and sys.argv[2] == 'sfx': mix = reverb(ui, .08)
 mix = hp(mix, 35)
 mix *= np.interp(tt, [0, .02, DUR - 1.0, DUR], [0, 1, 1, 0])[:, None]
 # gentle glue: soft knee only on peaks
 pk = np.abs(mix).max(); mix /= pk
 mix = np.where(np.abs(mix) > .7, np.sign(mix) * (.7 + .3 * np.tanh((np.abs(mix) - .7) / .3)), mix)
-mix *= .89 / np.abs(mix).max()
+mix *= (.5 if len(sys.argv) > 2 and sys.argv[2] == 'sfx' else .89) / np.abs(mix).max()
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'music2.wav'
 with wave.open(out, 'wb') as w:
