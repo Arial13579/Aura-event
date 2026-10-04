@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://auraevent.co.il/sitemap.xml
