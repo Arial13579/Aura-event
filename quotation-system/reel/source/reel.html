@@ -150,7 +150,8 @@ body{font-family:'Assistant',sans-serif;color:var(--fg);direction:rtl}
 .badge{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1300;font-weight:800;font-size:38px;border-radius:999px;padding:8px 34px;white-space:nowrap}
 .old{font-family:'Plex';font-size:70px;color:var(--muted);position:relative;display:inline-block;justify-self:center}
 .old i{position:absolute;left:-10px;right:-10px;top:50%;height:8px;background:#ef4444;border-radius:4px;transform-origin:100% 50%}
-.new{font-family:'Plex';font-size:200px;line-height:1;color:var(--fg)}
+.new{font-family:'Plex';font-size:176px;line-height:1;color:var(--fg)}
+.life{font-size:40px;font-weight:800;color:var(--accent2)}
 .seats{display:flex;gap:14px;justify-content:center}
 .seats i{width:110px;height:22px;border-radius:11px;background:var(--accent)}
 .olabel{font-size:40px;color:var(--muted);font-weight:700}
@@ -293,7 +294,8 @@ body{font-family:'Assistant',sans-serif;color:var(--fg);direction:rtl}
       <span class="badge">מבצע השקה · 5 הראשונים בלבד</span>
       <div class="olabel">מערכת מותאמת לעסק שלכם</div>
       <div class="old" id="old">₪2,000<i id="oldStrike"></i></div>
-      <div class="new" id="newP">₪999</div>
+      <div class="new" id="newP">₪1,499</div>
+      <div class="life" id="life">תשלום חד-פעמי · לכל החיים · בלי אותיות קטנות</div>
       <div class="seats" id="seats"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <div class="cta" id="cta"><svg width="60" height="60" viewBox="0 0 24 24"><path d="M12 3c5 0 9 3.4 9 7.6s-4 7.6-9 7.6c-1 0-2-.1-2.9-.4L4.5 20l1.2-3.7C4 14.9 3 12.9 3 10.6 3 6.4 7 3 12 3z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>כתבו "מערכת" בתגובות</div>
@@ -525,6 +527,7 @@ window.render = function(t){
     const c = eb(P(t,34.0,34.6)); css($('ocard'), {transform:`scale(${.8+.2*c})`, opacity:P(t,34,34.25)});
     css($('oldStrike'), {transform:`rotate(-6deg) scaleX(${eo(P(t,34.9,35.25))})`});
     const np = eb(P(t,35.3,35.8)); css($('newP'), {opacity:P(t,35.3,35.4), transform:`scale(${1.6 - .6*np})`});
+    const lf = eo(P(t,35.7,36.1)); css($('life'), {opacity:lf, transform:`translateY(${(1-lf)*20}px)`});
     $('seats').querySelectorAll('i').forEach((s,k) => { const x = eb(P(t,36.0+k*.12,36.35+k*.12)); s.style.transform=`scaleX(${x})`; });
     const ct = eo(P(t,37.4,37.9)); const pulse = t>37.9 ? 1 + .045*Math.sin((t-37.9)*6.5) : 1;
     css($('cta'), {opacity:ct, transform:`translateY(${(1-ct)*60}px) scale(${pulse})`});
