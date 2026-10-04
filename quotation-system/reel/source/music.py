@@ -282,6 +282,7 @@ place(sfx, whoosh(.5), 37.3, .3)
 
 # ---------------- mix & master ----------------
 music = drums * .9 + bass + pad + arp + fx * .8
+if len(sys.argv) > 2 and sys.argv[2] == 'sfx': music = fx * .55
 music = reverb(music, .16)
 mix = music + reverb(sfx, .12) * .9
 mix = hp(mix, 28)
