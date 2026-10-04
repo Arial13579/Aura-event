@@ -202,7 +202,11 @@ figcaption b{color:var(--fg);display:block;font-size:1rem}
 .plan li svg{width:18px;height:18px;color:var(--accent);margin-top:4px}
 .seats{display:flex;gap:6px}
 .seats i{flex:1;height:8px;border-radius:4px;background:var(--accent)}
-.addon{margin-top:24px;color:var(--muted);font-size:.95rem;border:1px dashed var(--line);border-radius:16px;padding:16px 20px}
+.calm{margin-top:32px;display:grid;gap:20px;border:1px solid var(--line);border-radius:22px;padding:28px;background:var(--surface-2)}
+.calm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.calm-grid>div{display:grid;gap:6px;align-content:start;min-width:0}
+.calm-grid p{color:var(--muted);font-size:.96rem}
+@media (max-width:780px){.calm-grid{grid-template-columns:1fr}}
 
 /* Contact */
 .contact{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
@@ -479,13 +483,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <ul>
             <li><svg><use href="#i-check"/></svg>כל מה שכלול במחיר הרגיל</li>
             <li><svg><use href="#i-check"/></svg>3 חודשי תמיכה במקום חודש</li>
-            <li><svg><use href="#i-check"/></svg>בתמורה: המלצה קצרה אחרי חודש שימוש</li>
           </ul>
           <div style="display:grid;gap:8px"><small style="color:var(--muted)">5 מקומות במחיר ההשקה</small><div class="seats" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
           <a class="btn primary" href="#contact" style="justify-self:start">שמרו לי מקום</a>
         </div>
       </div>
-      <p class="addon">אפשרות נוספת: תחזוקה ועדכונים שוטפים (שינוי מחירון, חבילות ותנאים) ב-₪99 לחודש, לא חובה.</p>
+      <div class="calm">
+        <h3>אני מכין לך את המערכת, ואת/ה פשוט עובד/ת איתה</h3>
+        <div class="calm-grid">
+          <div><b>בנויה לפי הנתונים שלך</b><p>את/ה מוסר/ת לי את המחירון, החבילות והתנאים, ואני מגדיר את הכול. המערכת מגיעה מוכנה לעבודה.</p></div>
+          <div><b>לוח בקרה פשוט ונוח</b><p>כל ההצעות, החתימות וההכנסות במסך אחד. בלי הגדרות מסובכות ובלי ללמוד תוכנה חדשה.</p></div>
+          <div><b>שקט ניהולי</b><p>כל הצעה יוצאת מסודרת ומחושבת נכון, כל הסכם חתום ושמור, ואת/ה יודע/ת בכל רגע מה סגור ומה ממתין.</p></div>
+        </div>
+      </div>
     </div>
   </section>
 
