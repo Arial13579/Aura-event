@@ -127,6 +127,7 @@ figcaption b{color:var(--fg);display:block;font-size:1rem}
 .check{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--paper-muted)}
 .check i{width:14px;height:14px;border-radius:4px;background:#0d9488;display:inline-block;flex:none;position:relative}
 .check i::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.dev-foot{text-align:center;font-size:10.5px;color:var(--paper-muted);border-top:1px solid var(--paper-line);padding-top:8px}
 .dash{background:#0b1716;color:#e8f3f1}
 .dash .dev-body{gap:12px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -262,7 +263,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div class="hero-copy">
         <span class="eyebrow">מערכת הצעות מחיר וחוזים לספקי אירועים</span>
         <h1>מהצעת מחיר לחוזה חתום, <em>בקישור אחד בוואטסאפ</em></h1>
-        <p class="lead">ממלאים את פרטי האירוע, המחיר מחושב לבד, והלקוח מקבל קישור לדף מעוצב. הוא קורא, חותם באצבע, וקובץ PDF של ההסכם החתום מגיע לשניכם.</p>
+        <p class="lead">ממלאים את פרטי האירוע, המחיר מחושב לבד, והלקוח מקבל קישור לדף מעוצב. הוא קורא, חותם בצ׳יק, וההסכם החתום יורד לו ישר למכשיר. את/ה מקבל/ת עותק במייל ובלוח הבקרה.</p>
         <div class="cta-row">
           <a class="btn primary" href="#pricing">למחיר ולמבצע ההשקה</a>
           <a class="btn" href="#built">איך זה עובד</a>
@@ -280,7 +281,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <div class="link-card"><div class="band">SNAP BOX · הצעת מחיר</div><div class="meta">לכבוד משפחת כהן · לחצו לצפייה וחתימה</div></div>
           <span class="time">14:02 <span class="ticks">✓✓</span></span>
         </div>
-        <div class="bubble them">מעולה, חתמתי! קיבלתי את ה-PDF למייל 👌<span class="time">14:19</span></div>
+        <div class="bubble them">מעולה, חתמתי! ה-PDF ירד לי ישר לטלפון 👌<span class="time">14:19</span></div>
         <div class="bubble">איזה כיף, נתראה באירוע! 🎉<span class="time">14:20 <span class="ticks">✓✓</span></span></div>
       </div>
     </div>
@@ -300,10 +301,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <ol class="flow">
         <li><span class="who">את/ה · כניסה מאובטחת</span><h3>כניסה עם Google</h3><p>רק חשבון הגוגל של העסק יכול ליצור הצעות ולראות את לוח הבקרה.</p></li>
         <li><span class="who">את/ה · כדקה</span><h3>ממלאים את פרטי האירוע</h3><p>שם הלקוח, סוג אירוע, מיקום, תאריך, שעות וכמות מוזמנים.</p></li>
-        <li><span class="who">המערכת · אוטומטי</span><h3>המחיר מחושב לבד</h3><p>לפי כמות המוזמנים, משך האירוע ומרחק הנסיעה. אפשר לשנות ידנית לפני השליחה.</p></li>
+        <li><span class="who">המערכת · אוטומטי</span><h3>המחיר מחושב לבד</h3><p>לפי המחירון והנתונים שתמסרו לנו. ממלאים פרטים, והמחיר מתעדכן אוטומטית. אפשר לשנות ידנית לפני השליחה.</p></li>
         <li><span class="who">את/ה · לחיצה אחת</span><h3>קישור ללקוח בוואטסאפ</h3><p>הקישור פותח דף מעוצב עם כל הפרטים, מה כלול בחבילה ותנאי ההסכם.</p></li>
-        <li><span class="who">הלקוח · מהטלפון</span><h3>הלקוח חותם באצבע</h3><p>חתימה על המסך ואישור התנאים. נשמרים גם התאריך, השעה, כתובת ה-IP וסוג הדפדפן.</p></li>
-        <li><span class="who">המערכת · אוטומטי</span><h3>PDF, מייל ולוח בקרה</h3><p>הלקוח מוריד PDF של ההסכם, את/ה מקבל/ת אותו במייל, והסטטוס מתעדכן בלוח הבקרה.</p></li>
+        <li><span class="who">הלקוח · מהטלפון</span><h3>הלקוח חותם בצ׳יק</h3><p>חתימה על המסך ואישור התנאים, ישר מהטלפון. התאריך והשעה של החתימה נשמרים.</p></li>
+        <li><span class="who">המערכת · אוטומטי</span><h3>PDF, מייל ולוח בקרה</h3><p>ההסכם החתום יורד ללקוח ישר למכשיר. את/ה מקבל/ת אותו במייל, והוא שמור גם בלוח הבקרה.</p></li>
       </ol>
 
       <div class="screens">
@@ -353,9 +354,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
               </div>
               <div class="check"><i></i>קראתי ואני מאשר/ת את תנאי ההסכם</div>
               <div class="dev-btn">אשר הסכם, הורד PDF ושלח</div>
+              <div class="dev-foot">Snap Box · <span class="num">054-6<span class="masked">00-0000</span></span> · <span class="num">snapb<span class="masked">xxxxxxxxxxx</span>@gmail.com</span></div>
             </div>
           </div>
-          <figcaption><b>מה שהלקוח רואה</b>דף נקי עם הפרטים, החבילה והתנאים. החתימה באצבע, ישר מהטלפון.</figcaption>
+          <figcaption><b>מה שהלקוח רואה</b>דף נקי עם הפרטים, החבילה והתנאים. חותמים בצ׳יק, ישר מהטלפון.</figcaption>
         </figure>
 
         <figure>
@@ -385,13 +387,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <figcaption><b>לוח הבקרה</b>כל ההצעות במקום אחד: מי חתם, מי עוד לא, הכנסות לפי חודש, וגישה לקובץ החתום.</figcaption>
         </figure>
       </div>
-      <p class="note" style="margin-top:14px">המסכים הם הדמיה עם נתוני דוגמה.</p>
+      <p class="note" style="margin-top:14px">המסכים הם הדמיה עם נתוני דוגמה. המחירון בדוגמה הוא של Snap Box; אצלך המערכת מוגדרת לפי המחירון שלך.</p>
 
       <ul class="features">
-        <li><svg><use href="#i-map"/></svg><div><b>מרחק נסיעה מחושב אוטומטית</b><span>הכתובת מתורגמת למיקום ונמדד מרחק נסיעה מתל אביב. תוספת הנסיעה נכנסת למחיר לפי מדרגות.</span></div></li>
-        <li><svg><use href="#i-clock"/></svg><div><b>תמחור לפי מוזמנים ושעות</b><span>מדרגות מחיר לפי כמות מוזמנים, וחישוב זמן נוסף ברבעי שעה מעבר לשעתיים של החבילה.</span></div></li>
-        <li><svg><use href="#i-sign"/></svg><div><b>חתימה דיגיטלית עם תיעוד</b><span>לצד החתימה נשמרים תאריך, שעה, כתובת IP ודפדפן, כדי לחזק את תוקף ההסכם.</span></div></li>
-        <li><svg><use href="#i-pdf"/></svg><div><b>PDF חתום לשני הצדדים</b><span>הלקוח מוריד את ההסכם המלא, והעותק מגיע אליך במייל עם כל הפרטים.</span></div></li>
+        <li><svg><use href="#i-map"/></svg><div><b>תוספת נסיעה לפי מרחק</b><span>מרחק הנסיעה מחושב אוטומטית לפי כתובת האירוע. נקודת המוצא ומדרגות התוספת נקבעות לפי מה שתמסרו לנו.</span></div></li>
+        <li><svg><use href="#i-clock"/></svg><div><b>המחירון שלך, החוקים שלך</b><span>חבילות, מדרגות לפי מוזמנים, שעות נוספות ותוספות מוגדרים לפי הנתונים שלך. המחיר מתעדכן לבד בכל הצעה.</span></div></li>
+        <li><svg><use href="#i-sign"/></svg><div><b>חתימה דיגיטלית בצ׳יק</b><span>הלקוח חותם על המסך ומאשר את התנאים. תאריך ושעת החתימה נשמרים בהסכם.</span></div></li>
+        <li><svg><use href="#i-pdf"/></svg><div><b>PDF חתום לשני הצדדים</b><span>ההסכם יורד ללקוח ישר למכשיר. העותק שלך מגיע במייל ונשמר בלוח הבקרה.</span></div></li>
         <li><svg><use href="#i-cal"/></svg><div><b>הוספה ליומן</b><span>כפתור שמוסיף את האירוע ליומן של הלקוח, כולל מסך היומן המקורי באייפון.</span></div></li>
         <li><svg><use href="#i-chart"/></svg><div><b>לוח בקרה עם גרפים</b><span>סטטוס חתימות, הכנסות חודשיות, העתקת קישור מחדש ומחיקת הצעות.</span></div></li>
         <li><svg><use href="#i-lock"/></svg><div><b>גישה רק לבעל/ת העסק</b><span>כניסה עם חשבון Google מורשה. הנתונים נשמרים במסד נתונים מאובטח בענן.</span></div></li>
@@ -423,6 +425,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <button class="role-tab" role="tab" id="tab-dj" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-mic"/></svg>DJ</button>
           <button class="role-tab" role="tab" id="tab-booth" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-box"/></svg>עמדות צילום ומגנטים</button>
           <button class="role-tab" role="tab" id="tab-decor" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-flower"/></svg>עיצוב, בלונים ופרחים</button>
+          <button class="role-tab" role="tab" id="tab-band" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-mic"/></svg>להקות ונגנים</button>
+          <button class="role-tab" role="tab" id="tab-video" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-cam"/></svg>צלמי וידאו ורחפן</button>
+          <button class="role-tab" role="tab" id="tab-food" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-star"/></svg>קייטרינג ובר</button>
+          <button class="role-tab" role="tab" id="tab-makeup" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-flower"/></svg>איפור ושיער</button>
+          <button class="role-tab" role="tab" id="tab-kids" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-star"/></svg>הפעלות, קוסמים ומנחים</button>
+          <button class="role-tab" role="tab" id="tab-rent" aria-selected="false" aria-controls="role-panel"><svg><use href="#i-box"/></svg>השכרת ציוד ואוהלים</button>
         </div>
         <div class="role-panel" id="role-panel" role="tabpanel" aria-live="polite"></div>
       </div>
@@ -454,7 +462,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div class="plans">
         <div class="plan">
           <h3>מחיר רגיל</h3>
-          <div class="price"><span class="amt num">₪3,490</span><span>תשלום חד-פעמי</span></div>
+          <div class="price"><span class="amt num">₪2,000</span><span>תשלום חד-פעמי</span></div>
           <ul>
             <li><svg><use href="#i-check"/></svg>מחולל הצעות עם המחירון והחבילות שלך</li>
             <li><svg><use href="#i-check"/></svg>דף הצעה ללקוח בעיצוב ובצבעים של העסק</li>
@@ -467,7 +475,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <div class="plan launch">
           <span class="badge">מבצע השקה · 5 הפונים הראשונים</span>
           <h3>מחיר השקה</h3>
-          <div class="price"><span class="amt num">₪1,990</span><s>₪3,490</s><span>חיסכון של ₪1,500</span></div>
+          <div class="price"><span class="amt num">₪999</span><s>₪2,000</s><span>חצי מחיר</span></div>
           <ul>
             <li><svg><use href="#i-check"/></svg>כל מה שכלול במחיר הרגיל</li>
             <li><svg><use href="#i-check"/></svg>3 חודשי תמיכה במקום חודש</li>
@@ -492,9 +500,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <p class="lead">ספרו לי מה התחום שלכם ואיך אתם מתמחרים היום, ואראה לכם איך המערכת תיראה אצלכם.</p>
       </div>
       <div class="c-cards">
-        <div class="c-card"><svg><use href="#i-phone"/></svg><div><small>טלפון / וואטסאפ</small><span class="val">054-60<span class="masked" aria-hidden="true">5-6789</span></span></div></div>
-        <div class="c-card"><svg><use href="#i-mail"/></svg><div><small>מייל</small><span class="val">snapboxeve<span class="masked" aria-hidden="true">xxxxxxxxx</span>@gmail.com</span></div></div>
-        <p class="note">הפרטים המלאים יפורסמו בגרסה הסופית.</p>
+        <div class="c-card"><svg><use href="#i-phone"/></svg><div><small>טלפון / וואטסאפ</small><span class="val">051-2440252</span></div></div>
+        <p class="note">מוזמנים לשלוח הודעה בוואטסאפ לכל שאלה.</p>
       </div>
     </div>
   </section>
@@ -526,7 +533,31 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     decor:{title:'עיצוב, בלונים ופרחים', pain:'כל הזמנה בנויה מרכיבים שונים, וקשה לתת מחיר מהיר ועקבי לכל לקוח.',
       calc:['חבילות עיצוב לפי גודל האירוע','פריטים נוספים: קשתות, מרכזי שולחן','הקמה, פירוק והובלה'],
       win:['הלקוח רואה בדיוק מה כלול','מקדמה שמאשרת את ההזמנה','סיכומי שיחה נשמרים בהערות להצעה'],
-      tags:['ימי הולדת','חינות','אירועי חברה','בריתות']}
+      tags:['ימי הולדת','חינות','אירועי חברה','בריתות']},
+    band:{title:'להקות ונגנים', pain:'המחיר תלוי בהרכב, בשעות ובציוד, וכל לקוח רוצה משהו קצת אחר.',
+      calc:['מחיר לפי הרכב: סולו, דואו, להקה מלאה','סטים נוספים ושעות נוספות','הגברה, נסיעות וחזרות'],
+      win:['הלקוח רואה בדיוק איזה הרכב הוזמן','לוח זמנים של הסטים כתוב בהסכם','מקדמה שמשריינת את התאריך'],
+      tags:['חופות','קבלות פנים','חתונות','אירועי חברה']},
+    video:{title:'צלמי וידאו ורחפן', pain:'עריכה, קליפ, טיזר ורחפן הם תוספות שמשנות את המחיר בכל אירוע.',
+      calc:['שעות צילום ומספר צלמים','קליפ, טיזר וסרט מלא','רחפן ונסיעות'],
+      win:['כל תוספת מתומחרת באותו אופן','מועד מסירת הסרט כתוב בהסכם','פחות אי-הבנות על מה הוזמן'],
+      tags:['חתונות','בר/בת מצווה','קליפים','אירועי חברה']},
+    food:{title:'קייטרינג ובר', pain:'מחיר למנה, מספר סועדים ותוספות מצריכים חישוב מחדש בכל הצעה.',
+      calc:['מחיר למנה לפי כמות סועדים','תפריט, בר ותוספות','מלצרים, כלים והובלה'],
+      win:['הצעה מדויקת לפי כמות המוזמנים','מועד לסגירת מספר סועדים בהסכם','מקדמה שמאשרת את ההזמנה'],
+      tags:['אירועים פרטיים','אירועי חברה','בר נייד','חינות']},
+    makeup:{title:'איפור ושיער', pain:'כלה, מלוות, ניסיון והגעה לבית הם רכיבים שמשתנים מהזמנה להזמנה.',
+      calc:['כלה ומלוות לפי כמות','איפור ניסיון ותסרוקת','הגעה עד הבית ושעת התחלה מוקדמת'],
+      win:['הכלה רואה מחיר מסודר מראש','שעות ההגעה כתובות בהסכם','תאריך משוריין עם מקדמה'],
+      tags:['כלות','ערבי חינה','בת מצווה','הפקות צילום']},
+    kids:{title:'הפעלות, קוסמים ומנחים', pain:'מחיר לפי משך המופע, גיל הילדים, כמות משתתפים ותוספות.',
+      calc:['מחיר לפי משך הפעלה','כמות משתתפים','תוספות: בלונים, מתנות, פינות יצירה'],
+      win:['ההורים מקבלים הצעה מהירה בוואטסאפ','תנאי ביטול ברורים','תזכורת לאירוע ביומן של הלקוח'],
+      tags:['ימי הולדת','בר/בת מצווה','אירועי חברה','גני ילדים']},
+    rent:{title:'השכרת ציוד ואוהלים', pain:'הרבה פריטים, כמויות, הובלה והקמה, וקל לפספס משהו בהצעה.',
+      calc:['מחיר לפי פריט וכמות','הובלה לפי מרחק','הקמה, פירוק וימי השכרה'],
+      win:['רשימת ציוד מסודרת בכל הצעה','אחריות על נזק לציוד כתובה בהסכם','לוח בקרה של כל ההזמנות לפי חודש'],
+      tags:['אוהלים','ריהוט','תאורה והגברה','במות']}
   };
   var panel = document.getElementById('role-panel');
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.role-tab'));
