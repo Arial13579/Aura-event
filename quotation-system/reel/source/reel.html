@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Reel</title>
+<style>
+@font-face{font-family:'Assistant';src:url(fonts/assistant-hebrew-400-normal.woff2) format('woff2');font-weight:400;unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:'Assistant';src:url(fonts/assistant-hebrew-700-normal.woff2) format('woff2');font-weight:700;unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:'Assistant';src:url(fonts/assistant-hebrew-800-normal.woff2) format('woff2');font-weight:800;unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:'Assistant';src:url(fonts/assistant-latin-400-normal.woff2) format('woff2');font-weight:400;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Assistant';src:url(fonts/assistant-latin-700-normal.woff2) format('woff2');font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Assistant';src:url(fonts/assistant-latin-800-normal.woff2) format('woff2');font-weight:800;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Secular One';src:url(fonts/secular-one-hebrew-400-normal.woff2) format('woff2');unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:'Secular One';src:url(fonts/secular-one-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Plex';src:url(fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2')}
+
+:root{--bg:#061210;--teal:#0d9488;--accent:#2dd4bf;--accent2:#5eead4;--ink:#04211d;--fg:#eaf6f4;--muted:#8fb1ac;--gold:#fbbf24;--wa:#1fa855;--paper:#fff;--pink:#1b2b29;--pm:#6b7f7c;--pl:#e1ebe9}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:'Assistant',sans-serif;color:var(--fg);direction:rtl}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:radial-gradient(1200px 900px at 50% 40%,#0b2522 0%,#061210 70%)}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45}
+#g1{width:620px;height:620px;background:#0d9488}
+#g2{width:520px;height:520px;background:#155e75}
+.grain{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:6px 6px}
+.num{font-family:'Plex',monospace;direction:ltr;unicode-bidi:isolate}
+.layer{position:absolute;inset:0}
+
+/* top text */
+#chip{position:absolute;top:236px;left:50%;transform:translateX(-50%);background:rgba(45,212,191,.14);border:2px solid rgba(45,212,191,.5);color:var(--accent2);font-weight:800;font-size:34px;padding:8px 28px;border-radius:999px;white-space:nowrap}
+#cap{position:absolute;top:310px;left:70px;right:70px;text-align:center;font-family:'Secular One',sans-serif;font-size:62px;line-height:1.18;min-height:150px}
+#cap .w{display:inline-block;margin:0 .12em;transition:none}
+#cap .hl{color:var(--accent)}
+
+/* phone */
+#phoneWrap{position:absolute;left:220px;top:500px;width:640px;height:1010px;transform-origin:50% 0%}
+#phone{position:absolute;inset:0;border-radius:72px;background:#0a1514;padding:18px;box-shadow:0 0 0 3px #1e3b37,0 60px 120px -30px rgba(0,0,0,.9),0 0 80px rgba(45,212,191,.15)}
+#notch{position:absolute;top:30px;left:50%;transform:translateX(-50%);width:170px;height:40px;background:#000;border-radius:24px;z-index:9}
+#screen{position:absolute;inset:18px;border-radius:56px;overflow:hidden;background:#fff;color:var(--pink);font-size:26px;line-height:1.4}
+.scr{position:absolute;inset:0;background:#fff;overflow:hidden}
+.status{height:78px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 48px 8px;font-weight:800;font-size:24px;color:#111}
+.dark .status{color:#fff}
+
+/* admin */
+.bar{background:var(--teal);color:#fff;padding:18px 26px;font-weight:800;font-size:28px;display:flex;justify-content:space-between;align-items:center}
+.pill{background:rgba(255,255,255,.2);border-radius:999px;padding:2px 14px;font-size:20px}
+.body{padding:20px 24px;display:grid;gap:14px}
+.f{display:grid;gap:4px}
+.f label{font-size:19px;font-weight:800;color:var(--pm)}
+.in{border:2px solid var(--pl);border-radius:14px;padding:9px 14px;background:#f8fbfa;min-height:52px;font-size:25px;white-space:nowrap;overflow:hidden}
+.in.focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(45,212,191,.25)}
+.caret{display:inline-block;width:2px;height:26px;background:var(--teal);vertical-align:middle;margin-inline-start:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.auto{font-size:16px;color:var(--teal);background:#ccfbf1;border-radius:6px;padding:1px 8px;margin-inline-start:6px}
+.calc{border:2px dashed #5eead4;background:#f0fdfa;border-radius:16px;padding:12px 16px;display:grid;gap:4px;font-size:23px}
+.calc .r{display:flex;justify-content:space-between}
+.calc .tot{border-top:2px solid #99f6e4;padding-top:8px;margin-top:4px;font-weight:800;font-size:30px}
+.btn{border-radius:16px;text-align:center;padding:16px;font-weight:800;font-size:26px;color:#fff;background:var(--teal)}
+.btn.wa{background:var(--wa)}
+.spin{display:inline-block;width:22px;height:22px;border:3px solid #99f6e4;border-top-color:var(--teal);border-radius:50%;vertical-align:middle}
+
+/* whatsapp */
+.wa-scr{background:#0b141a;color:#e9edef}
+.wa-head{background:#1f2c34;display:flex;align-items:center;gap:16px;padding:16px 24px}
+.av{width:58px;height:58px;border-radius:50%;background:#2a3942;display:grid;place-items:center;font-weight:800;color:var(--accent)}
+.wa-head small{display:block;color:#8696a0;font-size:19px}
+.wa-body{padding:30px 22px;display:grid;gap:18px;background:radial-gradient(#13232b 1px,transparent 1px) 0 0/22px 22px}
+.bub{max-width:84%;padding:14px 18px;border-radius:22px 22px 6px 22px;background:#005c4b;justify-self:start;font-size:25px}
+.bub.in2{background:#202c33;border-radius:22px 22px 22px 6px;justify-self:end}
+.lcard{background:#fff;color:var(--pink);border-radius:14px;overflow:hidden;margin-top:10px}
+.lcard .b{background:var(--teal);color:#fff;padding:16px 18px;font-family:'Secular One';font-size:26px}
+.lcard .m{padding:10px 18px;font-size:20px;color:var(--pm)}
+.tm{display:block;text-align:left;font-size:17px;color:#8fbfb5;margin-top:4px}
+
+/* client */
+.qhero{background:#0f2321;color:#fff;padding:22px 26px}
+.qhero small{color:#5eead4;font-weight:800;letter-spacing:.08em;font-size:17px}
+.qhero b{display:block;font-family:'Secular One';font-weight:400;font-size:36px}
+.qr{display:flex;justify-content:space-between;border-bottom:2px solid var(--pl);padding:9px 0;font-size:24px}
+.qr span:first-child{color:var(--pm)}
+.money{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.money div{background:#f0fdfa;border-radius:14px;padding:10px 4px}
+.money small{display:block;font-size:17px;color:var(--pm)}
+.money b{font-family:'Plex';font-size:25px}
+.sig{border:3px dashed #94a3b8;border-radius:16px;height:170px;position:relative;background:#fff}
+.sig svg{position:absolute;inset:10px 16px;width:calc(100% - 32px);height:calc(100% - 20px);overflow:visible}
+.chk{display:flex;gap:12px;align-items:center;font-size:21px;color:var(--pm)}
+.box{width:30px;height:30px;border-radius:8px;border:3px solid #94a3b8;flex:none;position:relative}
+.box.on{background:var(--teal);border-color:var(--teal)}
+.box.on::after{content:"";position:absolute;left:8px;top:2px;width:8px;height:15px;border:solid #fff;border-width:0 4px 4px 0;transform:rotate(45deg)}
+.toast{position:absolute;left:22px;right:22px;bottom:40px;background:#0f2321;color:#fff;border-radius:22px;padding:20px 22px;display:grid;grid-template-columns:64px 1fr;gap:16px;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.toast .ic{width:64px;height:64px;border-radius:16px;background:#ef4444;display:grid;place-items:center;font-weight:800;font-size:20px;font-family:'Plex'}
+.toast b{display:block;font-size:25px}
+.toast small{color:#9fc5bf;font-size:18px;direction:ltr;display:block;text-align:right}
+.prog{height:8px;background:#1f4540;border-radius:4px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0}
+
+/* dashboard */
+.dash{background:#0b1716;color:#e8f3f1}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{background:#12302c;border-radius:16px;padding:14px}
+.kpi small{display:block;color:#93b3ae;font-size:18px}
+.kpi b{font-family:'Plex';font-size:38px}
+.cbox{background:#12302c;border-radius:16px;padding:14px}
+.cbox small{color:#93b3ae;font-size:18px}
+.row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;background:#12302c;border-radius:14px;padding:14px 16px;font-size:22px;align-items:center}
+.st{border-radius:999px;padding:3px 14px;font-size:18px;font-weight:800;justify-self:start}
+.st.ok{background:#134e48;color:#5eead4}
+.st.wait{background:#4a3a10;color:#fbbf24}
+
+/* finger */
+#finger{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(255,255,255,.55);border:3px solid rgba(255,255,255,.95);box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:20;pointer-events:none}
+#ripple{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:4px solid rgba(45,212,191,.9);z-index:19}
+
+/* email notification */
+#mail{position:absolute;left:150px;right:150px;top:470px;background:rgba(245,250,249,.97);color:#111;border-radius:34px;padding:22px 26px;display:grid;grid-template-columns:72px 1fr;gap:18px;align-items:center;box-shadow:0 30px 60px rgba(0,0,0,.5);z-index:30}
+#mail .ic{width:72px;height:72px;border-radius:18px;background:#fff;border:2px solid #e5e7eb;display:grid;place-items:center}
+#mail small{color:#6b7280;font-size:22px}
+#mail b{display:block;font-size:28px}
+#mail .att{display:inline-block;margin-top:6px;background:#fee2e2;color:#b91c1c;border-radius:10px;padding:2px 12px;font-size:20px;font-weight:800}
+
+/* hook */
+#hook{display:grid;place-items:center}
+.doc{position:absolute;width:300px;background:#f8fafc;color:#334155;border-radius:18px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.5);font-size:26px}
+.doc .ln{height:12px;background:#cbd5e1;border-radius:6px;margin-top:12px}
+.doc b{display:block;font-size:24px;direction:ltr;text-align:right}
+.ntf{position:absolute;left:120px;right:120px;background:rgba(32,44,51,.97);border-radius:26px;padding:20px 26px;font-size:30px;display:flex;gap:16px;align-items:center;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.ntf .av{width:56px;height:56px;font-size:22px}
+.ntf small{display:block;color:#8696a0;font-size:21px}
+#hookTitle{position:absolute;top:300px;left:60px;right:60px;text-align:center;font-family:'Secular One';font-size:92px;line-height:1.12}
+#hookTitle em{font-style:normal;color:#f87171}
+#strike{position:absolute;height:14px;background:#ef4444;border-radius:7px;left:140px;top:960px;width:800px;transform-origin:100% 50%}
+
+/* brand reveal */
+#brand{display:grid;place-items:center;align-content:center;gap:34px;text-align:center}
+#mark{width:210px;height:210px;border-radius:56px;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-size:120px;font-family:'Plex';box-shadow:0 0 120px rgba(45,212,191,.55);margin:0 auto}
+#brand h1{font-family:'Secular One';font-weight:400;font-size:96px;line-height:1.1}
+#brand p{font-size:50px;color:var(--muted);font-weight:700}
+
+/* roles */
+#roles{padding:540px 80px 0}
+#rolesTitle{font-family:'Secular One';font-size:84px;text-align:center;line-height:1.15;margin-bottom:56px}
+#rolesTitle em{font-style:normal;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:22px;justify-content:center}
+.chipR{border:3px solid rgba(45,212,191,.55);background:rgba(45,212,191,.1);border-radius:999px;padding:14px 34px;font-size:42px;font-weight:800}
+
+/* offer */
+#offer{display:grid;justify-items:center;align-content:start;padding-top:520px;gap:30px;text-align:center}
+.ocard{width:860px;background:#0d1f1d;border:4px solid var(--accent);border-radius:48px;padding:46px 40px;display:grid;gap:18px;position:relative;box-shadow:0 0 120px rgba(45,212,191,.25)}
+.badge{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1300;font-weight:800;font-size:38px;border-radius:999px;padding:8px 34px;white-space:nowrap}
+.old{font-family:'Plex';font-size:70px;color:var(--muted);position:relative;display:inline-block;justify-self:center}
+.old i{position:absolute;left:-10px;right:-10px;top:50%;height:8px;background:#ef4444;border-radius:4px;transform-origin:100% 50%}
+.new{font-family:'Plex';font-size:200px;line-height:1;color:var(--fg)}
+.seats{display:flex;gap:14px;justify-content:center}
+.seats i{width:110px;height:22px;border-radius:11px;background:var(--accent)}
+.olabel{font-size:40px;color:var(--muted);font-weight:700}
+.cta{display:flex;align-items:center;gap:20px;background:var(--wa);color:#fff;border-radius:999px;padding:28px 54px;font-size:50px;font-weight:800;box-shadow:0 20px 60px rgba(31,168,85,.45)}
+.phoneNum{font-family:'Plex';font-size:76px;letter-spacing:.02em}
+.small{font-size:36px;color:var(--muted);font-weight:700}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow" id="g1"></div><div class="glow" id="g2"></div>
+  <div class="grain"></div>
+
+  <!-- HOOK -->
+  <div class="layer" id="hook">
+    <div id="hookTitle">עדיין שולחים הצעות מחיר <em>בוורד?</em></div>
+    <div class="doc" id="d1"><b>הצעה_סופית_3.docx</b><div class="ln" style="width:90%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:80%"></div></div>
+    <div class="doc" id="d2"><b>חוזה_סרוק.pdf</b><div class="ln" style="width:85%"></div><div class="ln" style="width:60%"></div><div class="ln" style="width:75%"></div></div>
+    <div class="doc" id="d3"><b>מחירון_2026.xlsx</b><div class="ln" style="width:80%"></div><div class="ln" style="width:90%"></div><div class="ln" style="width:55%"></div></div>
+    <div class="ntf" id="n1"><span class="av">מכ</span><div><small>משפחת כהן · וואטסאפ</small>נו, מה המחיר? 🙄</div></div>
+    <div class="ntf" id="n2"><span class="av">נא</span><div><small>נוי ואלון · וואטסאפ</small>שלחת כבר את החוזה?</div></div>
+    <div id="strike"></div>
+  </div>
+
+  <!-- BRAND -->
+  <div class="layer" id="brand">
+    <div id="mark">₪</div>
+    <h1>מחולל הצעות מחיר</h1>
+    <p>מהצעה לחוזה חתום, בקישור אחד</p>
+  </div>
+
+  <!-- DEMO -->
+  <div class="layer" id="demo">
+    <div id="phoneWrap">
+      <div id="phone">
+        <div id="notch"></div>
+        <div id="screen">
+          <!-- admin -->
+          <div class="scr" id="sAdmin">
+            <div class="status"><span class="num">9:41</span><span>●●●</span></div>
+            <div class="bar">מחולל הצעת מחיר וחוזה <span class="pill">מנהל</span></div>
+            <div class="body">
+              <div class="f"><label>לכבוד</label><div class="in" id="fName"></div></div>
+              <div class="g2">
+                <div class="f"><label>סוג אירוע</label><div class="in" id="fType"></div></div>
+                <div class="f"><label>מוזמנים</label><div class="in num" id="fGuests" style="text-align:right"></div></div>
+              </div>
+              <div class="f"><label>מיקום האירוע</label><div class="in" id="fLoc"></div></div>
+              <div class="g2">
+                <div class="f"><label>שעות</label><div class="in num" id="fHours" style="text-align:right"></div></div>
+                <div class="f"><label>מרחק <span class="auto">אוטומטי</span></label><div class="in" id="fDist"></div></div>
+              </div>
+              <div class="calc" id="calc">
+                <div class="r" id="c1"><span>חבילה עד 300 מוזמנים</span><span class="num">₪1,299</span></div>
+                <div class="r" id="c2"><span>שעה נוספת</span><span class="num">₪200</span></div>
+                <div class="r" id="c3"><span>נסיעה (עד 30 ק״מ)</span><span class="num">₪0</span></div>
+                <div class="r tot"><span>מחיר כולל</span><span class="num" id="total">₪0</span></div>
+              </div>
+              <div class="btn" id="bLink">צור קישור ללקוח</div>
+              <div class="btn wa" id="bWa">שלח ללקוח בוואטסאפ</div>
+            </div>
+          </div>
+          <!-- whatsapp -->
+          <div class="scr wa-scr dark" id="sWa">
+            <div class="status" style="background:#1f2c34"><span class="num">9:42</span><span>●●●</span></div>
+            <div class="wa-head"><span class="av">מכ</span><div style="font-weight:800">משפחת כהן<small>מחובר/ת</small></div></div>
+            <div class="wa-body">
+              <div class="bub" id="wb1">היי! מצרפת את הצעת המחיר וההסכם לאירוע 🙂
+                <div class="lcard"><div class="b">SNAP BOX · הצעת מחיר</div><div class="m">לכבוד משפחת כהן · לחצו לצפייה וחתימה</div></div>
+                <span class="tm">9:42 <span id="ticks" style="color:#8696a0">✓✓</span></span>
+              </div>
+              <div class="bub in2" id="wb2">וואו, איזה מהיר! פותחת עכשיו 😍<span class="tm" style="color:#8696a0">9:43</span></div>
+            </div>
+          </div>
+          <!-- client -->
+          <div class="scr" id="sClient">
+            <div class="status" style="background:#0f2321;color:#fff"><span class="num">9:43</span><span>●●●</span></div>
+            <div class="qhero"><small>SNAP BOX · הצעת מחיר והסכם</small><b>לכבוד משפחת כהן</b></div>
+            <div class="body">
+              <div>
+                <div class="qr"><span>סוג אירוע</span><span>בר מצווה</span></div>
+                <div class="qr"><span>תאריך</span><span class="num">19.11.2026</span></div>
+                <div class="qr"><span>שעות פעילות</span><span class="num">19:30–22:30</span></div>
+              </div>
+              <div class="money">
+                <div><small>מחיר כולל</small><b>₪1,499</b></div>
+                <div><small>מקדמה</small><b>₪200</b></div>
+                <div><small>יתרה</small><b>₪1,299</b></div>
+              </div>
+              <div class="f"><label>אישור וחתימת הלקוח</label>
+                <div class="sig" id="sigBox"><svg viewBox="0 0 520 140" preserveAspectRatio="none"><path id="sigPath" d="M20 104c22-8 34-70 54-70s-10 82 14 82 30-62 52-62-6 48 18 48 34-34 52-34 10 24 28 24 46-18 70-18 40 8 70 4 50-30 70-36" fill="none" stroke="#0f2321" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="chk"><span class="box" id="box"></span>קראתי ואני מאשר/ת את תנאי ההסכם</div>
+              <div class="btn" id="bSign">אשר הסכם, הורד PDF ושלח</div>
+            </div>
+            <div class="toast" id="toast"><span class="ic">PDF</span><div><b>ההסכם החתום ירד למכשיר ✓</b><small>SnapBox_Contract.pdf</small><div class="prog"><i id="progBar"></i></div></div></div>
+          </div>
+          <!-- dashboard -->
+          <div class="scr dash dark" id="sDash">
+            <div class="status"><span class="num">9:44</span><span>●●●</span></div>
+            <div class="bar">לוח בקרה <span class="pill">חי</span></div>
+            <div class="body">
+              <div class="kpis">
+                <div class="kpi"><small>הצעות</small><b class="num" id="k1">19</b></div>
+                <div class="kpi"><small>נחתמו</small><b class="num" id="k2">11</b></div>
+                <div class="kpi"><small>ממתינות</small><b class="num" id="k3">8</b></div>
+              </div>
+              <div class="cbox"><small>הכנסות חודשיות (הצעות חתומות)</small>
+                <svg viewBox="0 0 520 220" style="width:100%;display:block;margin-top:8px">
+                  <line x1="10" y1="200" x2="510" y2="200" stroke="#1f4540" stroke-width="2"/>
+                  <rect x="40" y="130" width="70" height="70" rx="8" fill="#2dd4bf" opacity=".5"/>
+                  <rect x="150" y="96" width="70" height="104" rx="8" fill="#2dd4bf" opacity=".65"/>
+                  <rect x="260" y="112" width="70" height="88" rx="8" fill="#2dd4bf" opacity=".8"/>
+                  <rect id="bar4" x="370" y="200" width="70" height="0" rx="8" fill="#2dd4bf"/>
+                  <text id="barLbl" x="405" y="40" text-anchor="middle" fill="#e8f3f1" font-size="26" font-family="Plex">₪0</text>
+                </svg>
+              </div>
+              <div class="row" id="r1"><span>משפחת כהן</span><span class="num">19.11</span><span class="st wait" id="st1">ממתין</span></div>
+              <div class="row"><span>נוי ואלון</span><span class="num">03.12</span><span class="st wait">ממתין</span></div>
+              <div class="row"><span>חברת אורבן</span><span class="num">11.12</span><span class="st ok">נחתם</span></div>
+            </div>
+          </div>
+          <div id="ripple"></div>
+          <div id="finger"></div>
+        </div>
+      </div>
+    </div>
+    <div id="mail"><span class="ic"><svg width="44" height="34" viewBox="0 0 44 34"><rect x="1" y="1" width="42" height="32" rx="5" fill="#fff" stroke="#ea4335" stroke-width="2"/><path d="M3 4l19 14L41 4" fill="none" stroke="#ea4335" stroke-width="3"/></svg></span><div><small>מייל · עכשיו</small><b>הסכם חתום חדש: משפחת כהן</b><span class="att">PDF מצורף</span></div></div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="layer" id="roles">
+    <div id="rolesTitle">המחירון שלכם.<br><em>הכללים שלכם.</em></div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <!-- OFFER -->
+  <div class="layer" id="offer">
+    <div class="ocard" id="ocard">
+      <span class="badge">מבצע השקה · 5 הראשונים בלבד</span>
+      <div class="olabel">מערכת מותאמת לעסק שלכם</div>
+      <div class="old" id="old">₪2,000<i id="oldStrike"></i></div>
+      <div class="new" id="newP">₪999</div>
+      <div class="seats" id="seats"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="cta" id="cta"><svg width="56" height="56" viewBox="0 0 24 24"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.8-1.1-4.6-4-4.8-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>שלחו "מערכת" בוואטסאפ</div>
+    <div class="phoneNum" id="pnum">051-2440252</div>
+    <div class="small" id="bio">או לחצו על הקישור בביו</div>
+  </div>
+
+  <div id="chip"></div>
+  <div id="cap"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a, x));
+const P = (t,a,b) => clamp((t-a)/(b-a));
+const eo = x => 1 - Math.pow(1-x, 3);
+const eio = x => x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2;
+const eb = x => { const c1=1.70158, c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); };
+const lerp = (a,b,x) => a + (b-a)*x;
+const fmt = n => '₪' + Math.round(n).toLocaleString('en-US');
+function win(t,a,b,fi=.35,fo=.35){ return Math.min(P(t,a,a+fi), 1-P(t,b-fo,b)); }
+function css(el, o){ for (const k in o) el.style[k] = o[k]; }
+
+/* ---------- narration (also the voice-over script) ---------- */
+const LINES = [
+  [0.2, 3.2,  'עדיין מכינים הצעות מחיר בוורד ורודפים אחרי חוזים?'],
+  [3.3, 6.0,  'יש דרך הרבה יותר מהירה.'],
+  [6.1, 10.0, 'ממלאים את פרטי האירוע בטלפון,'],
+  [10.1,14.4, 'והמחיר מחושב לבד, לפי המחירון שלכם.'],
+  [14.5,18.4, 'לחיצה אחת, והלקוח מקבל קישור בוואטסאפ.'],
+  [18.5,22.4, 'הלקוח פותח וחותם בצ׳יק מהטלפון,'],
+  [22.5,25.4, 'וההסכם החתום יורד לו ישר למכשיר.'],
+  [25.5,30.4, 'אתם מקבלים עותק במייל, והכול מסודר בלוח הבקרה.'],
+  [30.5,33.9, 'מתאים לכל ספק אירועים.'],
+  [34.0,37.4, 'אני בונה לכם את המערכת לפי הנתונים שלכם.'],
+  [37.5,41.5, 'מחיר השקה לחמשת הראשונים. שלחו הודעה עכשיו!'],
+];
+const HL = ['בוורד','מהירה','בטלפון','לבד','בוואטסאפ','בצ׳יק','למכשיר','במייל','לוח','ספק','שלכם','השקה','עכשיו!'];
+let lastLine = -1;
+function renderCaption(t){
+  const i = t < 3.3 ? -1 : LINES.findIndex(l => t >= l[0] && t < l[1]);
+  const cap = $('cap');
+  if (i !== lastLine){
+    lastLine = i;
+    cap.innerHTML = i < 0 ? '' : LINES[i][2].split(' ').map(w => `<span class="w${HL.some(h=>w.includes(h))?' hl':''}">${w}</span>`).join(' ');
+  }
+  if (i < 0) return;
+  const [a,b] = LINES[i];
+  const words = cap.querySelectorAll('.w');
+  const speak = (b - a) * .78;
+  words.forEach((w, k) => {
+    const wt = a + (k / words.length) * speak;
+    const x = eo(P(t, wt, wt + .22));
+    w.style.opacity = .18 + .82*x;
+    w.style.transform = `translateY(${(1-x)*18}px)`;
+  });
+  cap.style.opacity = 1 - P(t, b-.12, b);
+}
+const STEPS = [[6,10,'שלב 1 · ממלאים פרטים'],[10,14.5,'שלב 2 · המחיר מחושב לבד'],[14.5,18.5,'שלב 3 · שולחים בוואטסאפ'],[18.5,25.5,'שלב 4 · הלקוח חותם'],[25.5,30.5,'שלב 5 · הכול נשמר אצלכם']];
+let lastStep = '';
+function renderChip(t){
+  const s = STEPS.find(s => t >= s[0] && t < s[1]);
+  const c = $('chip');
+  const txt = s ? s[2] : '';
+  if (txt !== lastStep){ lastStep = txt; c.textContent = txt; }
+  c.style.opacity = s ? Math.min(P(t,s[0],s[0]+.3), 1 - (t>29.9 ? P(t,30.1,30.5):0)) : 0;
+  c.style.display = s ? 'block' : 'none';
+}
+
+/* ---------- helpers for the phone ---------- */
+function posOf(el){ let x=0,y=0,e=el; const scr=$('screen'); while(e && e!==scr){ x+=e.offsetLeft; y+=e.offsetTop; e=e.offsetParent; } return {x, y, w:el.offsetWidth, h:el.offsetHeight}; }
+function center(el, dx=0, dy=0){ const p = posOf(el); return {x:p.x+p.w/2+dx, y:p.y+p.h/2+dy}; }
+function typed(el, txt, t, a, b, focus){
+  const n = Math.round(txt.length * P(t,a,b));
+  const on = t >= a - .25 && t < b + .25;
+  el.classList.toggle('focus', on && focus !== false);
+  el.innerHTML = (t < a ? '' : txt.slice(0, n)) + (on && Math.floor(t*3)%2===0 ? '<span class="caret"></span>' : '');
+}
+/* finger path: list of [time, point-fn, tap?] */
+function fingerAt(t, keys){
+  const f = $('finger'), r = $('ripple');
+  if (!keys.length){ f.style.opacity = 0; r.style.opacity = 0; return; }
+  let p;
+  if (t <= keys[0][0]) p = keys[0][1]();
+  else if (t >= keys[keys.length-1][0]) p = keys[keys.length-1][1]();
+  else {
+    for (let i=0;i<keys.length-1;i++){
+      const [ta,fa] = keys[i], [tb,fb] = keys[i+1];
+      if (t>=ta && t<=tb){ const x=eio(P(t,ta,tb)); const A=fa(), B=fb(); p={x:lerp(A.x,B.x,x), y:lerp(A.y,B.y,x)}; break; }
+    }
+  }
+  let press = 0, rip = -1;
+  keys.forEach(k => { if (k[2]) { const d = t - k[0]; if (d > -.12 && d < .12) press = 1 - Math.abs(d)/.12; if (d >= 0 && d < .5) rip = d/.5; } });
+  css(f, {left:p.x+'px', top:p.y+'px', opacity:1, transform:`scale(${1 - .22*press})`});
+  if (rip >= 0) css(r, {left:p.x+'px', top:p.y+'px', opacity:1-rip, transform:`scale(${1+rip*1.6})`}); else r.style.opacity = 0;
+}
+
+/* ---------- main render ---------- */
+const ROLES = ['מפיקי אירועים','צלמים','DJ','עמדות צילום','להקות ונגנים','צלמי וידאו','קייטרינג ובר','איפור ושיער','עיצוב ובלונים','הפעלות וקוסמים','השכרת ציוד'];
+$('chips').innerHTML = ROLES.map(r => `<span class="chipR">${r}</span>`).join('');
+const sigPath = $('sigPath'); const sigLen = sigPath.getTotalLength();
+sigPath.style.strokeDasharray = sigLen;
+
+window.render = function(t){
+  /* background drift */
+  css($('g1'), {left:(120+Math.sin(t*.35)*140)+'px', top:(260+Math.cos(t*.3)*120)+'px'});
+  css($('g2'), {left:(480+Math.cos(t*.27)*160)+'px', top:(1180+Math.sin(t*.33)*140)+'px'});
+
+  /* HOOK 0 – 3.3 */
+  const hk = win(t, -1, 3.35, .01, .35);
+  $('hook').style.opacity = hk; $('hook').style.display = hk>0?'block':'none';
+  if (hk > 0){
+    const ht = eo(P(t,.0,.5));
+    css($('hookTitle'), {opacity: ht, transform:`translateY(${(1-ht)*40}px)`});
+    const docs = [['d1',130,760,-12,.25],['d2',600,820,9,.45],['d3',360,1080,-4,.65]];
+    docs.forEach(([id,x,y,rot,st]) => { const e = eb(P(t,st,st+.45)); const shake = Math.sin(t*9+x)*3*P(t,1.4,2.6);
+      css($(id), {left:x+'px', top:y+'px', opacity:P(t,st,st+.2), transform:`scale(${.6+.4*e}) rotate(${rot+shake}deg)`}); });
+    [['n1',1320,1.0],['n2',1470,1.5]].forEach(([id,y,st]) => { const e = eo(P(t,st,st+.4));
+      css($(id), {top:y+'px', opacity:P(t,st,st+.2), transform:`translateY(${(1-e)*60}px)`}); });
+    const sk = eo(P(t,2.45,2.8));
+    css($('strike'), {transform:`rotate(-8deg) scaleX(${sk})`, opacity: sk>0?1:0});
+  }
+
+  /* BRAND 3.3 – 6 */
+  const br = win(t, 3.3, 6.05, .3, .35);
+  $('brand').style.opacity = br; $('brand').style.display = br>0?'grid':'none';
+  if (br > 0){
+    const m = eb(P(t,3.35,3.95));
+    css($('mark'), {transform:`scale(${m}) rotate(${(1-m)*-30}deg)`});
+    const h = eo(P(t,3.7,4.2)); css($('brand').querySelector('h1'), {opacity:h, transform:`translateY(${(1-h)*30}px)`});
+    const s = eo(P(t,4.1,4.6)); css($('brand').querySelector('p'), {opacity:s, transform:`translateY(${(1-s)*30}px)`});
+  }
+
+  /* DEMO 6 – 30.5 */
+  const dm = win(t, 5.9, 30.6, .45, .45);
+  $('demo').style.opacity = dm; $('demo').style.display = dm>0?'block':'none';
+  if (dm > 0){
+    const enter = eo(P(t,5.9,6.6));
+    /* camera: subtle push-ins on key moments */
+    const zCalc = eio(P(t,10.0,10.8)) * (1 - eio(P(t,13.0,13.6)));
+    const zSig  = eio(P(t,19.2,19.9)) * (1 - eio(P(t,21.4,22.0)));
+    const zToast= eio(P(t,23.3,23.9)) * (1 - eio(P(t,25.0,25.5)));
+    const zDash = eio(P(t,27.0,27.6)) * (1 - eio(P(t,29.4,30.0)));
+    const sc = 1 + .14*zCalc + .16*zSig + .12*zToast + .08*zDash;
+    const ty = 0;
+    const exitS = 1 - .15*P(t,30.0,30.6);
+    css($('phoneWrap'), {transform:`translateY(${(1-enter)*500 + ty}px) scale(${sc*exitS}) rotate(${(1-enter)*6}deg)`});
+
+    /* screens */
+    const show = (id, a, b) => { const el=$(id); const on = t>=a && t<b; el.style.display = on || (t>=b && t<b+.45) ? 'block':'none'; return el; };
+    const sA = show('sAdmin', 0, 15.0), sW = show('sWa', 14.9, 18.9), sC = show('sClient', 18.8, 27.0), sD = show('sDash', 26.9, 99);
+    const slide = (el, a) => { const x = eio(P(t,a,a+.45)); el.style.transform = `translateX(${(1-x)*-100}%)`; el.style.zIndex = 2; };
+    sA.style.transform='none'; sA.style.zIndex=1;
+    slide(sW, 14.9); slide(sC, 18.8); slide(sD, 26.9);
+    if (t>=18.8) sW.style.zIndex=1; if (t>=26.9) sC.style.zIndex=1;
+
+    /* admin typing */
+    typed($('fName'), 'משפחת כהן', t, 6.55, 7.1);
+    typed($('fType'), 'בר מצווה', t, 7.3, 7.7);
+    typed($('fGuests'), '220', t, 7.9, 8.15);
+    typed($('fLoc'), 'אולמי הגן, ראשון לציון', t, 8.35, 9.05);
+    typed($('fHours'), '19:30–22:30', t, 9.25, 9.6);
+    const fd = $('fDist');
+    if (t < 9.7) { fd.innerHTML=''; fd.classList.remove('focus'); }
+    else if (t < 10.2) { fd.innerHTML = '<span class="spin" style="transform:rotate('+(t*720)+'deg)"></span>'; }
+    else { fd.innerHTML = '<span class="num">12</span> ק״מ'; fd.classList.toggle('focus', t<10.8); }
+    ['c1','c2','c3'].forEach((id,k) => { const x = eo(P(t,10.3+k*.45,10.6+k*.45)); css($(id), {opacity:x, transform:`translateX(${(1-x)*-30}px)`}); });
+    const tot = eo(P(t,11.7,12.9)); $('total').textContent = fmt(1499*tot);
+    $('calc').style.boxShadow = t>12.9 && t<14 ? `0 0 0 ${6*(1-P(t,12.9,13.7))}px rgba(45,212,191,.45)` : 'none';
+    $('bWa').style.transform = `scale(${1 - .05*Math.max(0,1-Math.abs(t-14.4)/.12)})`;
+
+    /* whatsapp */
+    const w1 = eb(P(t,15.35,15.75)); css($('wb1'), {opacity:P(t,15.35,15.5), transform:`scale(${.7+.3*w1})`, transformOrigin:'0% 100%'});
+    $('ticks').style.color = t > 16.5 ? '#53bdeb' : '#8696a0';
+    const w2 = eb(P(t,17.1,17.5)); css($('wb2'), {opacity:P(t,17.1,17.25), transform:`scale(${.7+.3*w2})`, transformOrigin:'100% 100%'});
+
+    /* client sign */
+    const sp = P(t,19.7,21.3);
+    sigPath.style.strokeDashoffset = sigLen*(1-sp);
+    $('box').classList.toggle('on', t > 21.75);
+    $('bSign').style.transform = `scale(${1 - .05*Math.max(0,1-Math.abs(t-22.6)/.12)})`;
+    $('bSign').innerHTML = t>22.65 && t<23.4 ? '<span class="spin" style="border-color:#99f6e4;border-top-color:#fff;transform:rotate('+(t*720)+'deg)"></span>&nbsp; מכין PDF…' : 'אשר הסכם, הורד PDF ושלח';
+    const ts = eb(P(t,23.4,23.85)); css($('toast'), {opacity:P(t,23.4,23.55), transform:`translateY(${(1-ts)*140}px)`});
+    $('progBar').style.width = (eo(P(t,23.7,24.6))*100)+'%';
+
+    /* email notification over phone */
+    const ml = eo(P(t,25.55,26.0)) * (1 - eio(P(t,27.4,27.8)));
+    css($('mail'), {opacity:ml, transform:`translateY(${(ml-1)*160}px) scale(${.92+.08*ml})`});
+
+    /* dashboard */
+    const flip = t > 28.0;
+    $('k2').textContent = flip ? '12' : '11'; $('k3').textContent = flip ? '7' : '8';
+    const st1 = $('st1'); st1.textContent = flip ? 'נחתם' : 'ממתין'; st1.className = 'st ' + (flip ? 'ok' : 'wait');
+    $('r1').style.boxShadow = flip && t < 29 ? `0 0 0 ${5*(1-P(t,28,29))}px rgba(45,212,191,.6)` : 'none';
+    const bh = eo(P(t,27.4,28.6)) * 150; $('bar4').setAttribute('y', 200-bh); $('bar4').setAttribute('height', bh);
+    $('barLbl').textContent = '₪' + (7.4*P(t,27.4,28.6)).toFixed(1) + 'K'; $('barLbl').setAttribute('y', 190-bh);
+
+    /* finger choreography */
+    const keys = [];
+    if (t < 15.0){
+      keys.push([6.0, ()=>({x:420,y:1050})],[6.45, ()=>center($('fName')), true],
+        [7.2, ()=>center($('fType')), true],[7.8, ()=>center($('fGuests')), true],
+        [8.25, ()=>center($('fLoc')), true],[9.15, ()=>center($('fHours')), true],
+        [9.8, ()=>center($('fHours'),0,40)],[13.6, ()=>({x:420,y:880})],[14.4, ()=>center($('bWa')), true],[15.0, ()=>center($('bWa'),0,40)]);
+    } else if (t >= 19.1 && t < 23.4){
+      const sb = posOf($('sigBox'));
+      const sigPt = x => { const q = sigPath.getPointAtLength(sigLen*x); return {x: sb.x + 16 + q.x/520*(sb.w-32), y: sb.y + 10 + q.y/140*(sb.h-20)}; };
+      keys.push([19.1, ()=>({x:300,y:900})],[19.65, ()=>sigPt(0)]);
+      for (let k=1;k<=24;k++) keys.push([19.7 + 1.6*k/24, (kk=>()=>sigPt(kk/24))(k)]);
+      keys.push([21.75, ()=>center($('box')), true],[22.6, ()=>center($('bSign')), true],[23.3, ()=>center($('bSign'),60,120)]);
+    }
+    const fOn = (t>=6.0 && t<15.0) || (t>=19.1 && t<23.4);
+    if (fOn) fingerAt(t, keys); else { $('finger').style.opacity=0; $('ripple').style.opacity=0; }
+    if (fOn){ const fade = Math.min(P(t,6.0,6.3)+(t>=19.1?1:0), 1) * (t<15 ? 1-P(t,14.7,15.0) : 1-P(t,23.1,23.4)); $('finger').style.opacity = fade; }
+  }
+
+  /* ROLES 30.5 – 34 */
+  const rl = win(t, 30.4, 34.05, .35, .35);
+  $('roles').style.opacity = rl; $('roles').style.display = rl>0?'block':'none';
+  if (rl > 0){
+    const tt = eo(P(t,30.5,31.0)); css($('rolesTitle'), {opacity:tt, transform:`translateY(${(1-tt)*40}px)`});
+    $('chips').querySelectorAll('.chipR').forEach((c,k) => { const x = eb(P(t,31.0+k*.12,31.4+k*.12)); css(c, {opacity:P(t,31.0+k*.12,31.15+k*.12), transform:`scale(${.5+.5*x})`}); });
+  }
+
+  /* OFFER 34 – end */
+  const of = win(t, 33.95, 99, .4, .1);
+  $('offer').style.opacity = of; $('offer').style.display = of>0?'grid':'none';
+  if (of > 0){
+    const c = eb(P(t,34.0,34.6)); css($('ocard'), {transform:`scale(${.8+.2*c})`, opacity:P(t,34,34.25)});
+    css($('oldStrike'), {transform:`rotate(-6deg) scaleX(${eo(P(t,34.9,35.25))})`});
+    const np = eb(P(t,35.3,35.8)); css($('newP'), {opacity:P(t,35.3,35.4), transform:`scale(${1.6 - .6*np})`});
+    $('seats').querySelectorAll('i').forEach((s,k) => { const x = eb(P(t,36.0+k*.12,36.35+k*.12)); s.style.transform=`scaleX(${x})`; });
+    const ct = eo(P(t,37.4,37.9)); const pulse = t>37.9 ? 1 + .045*Math.sin((t-37.9)*6.5) : 1;
+    css($('cta'), {opacity:ct, transform:`translateY(${(1-ct)*60}px) scale(${pulse})`});
+    const pn = eo(P(t,37.8,38.3)); css($('pnum'), {opacity:pn, transform:`translateY(${(1-pn)*40}px)`});
+    $('bio').style.opacity = eo(P(t,38.4,38.9));
+  }
+
+  renderChip(t);
+  renderCaption(t);
+};
+window.DURATION = 41.5;
+document.fonts.ready.then(() => { window.__ready = true; render(0); });
+</script>
+</body>
+</html>
