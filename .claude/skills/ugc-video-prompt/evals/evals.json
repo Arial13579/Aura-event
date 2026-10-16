@@ -1,0 +1,26 @@
+{
+  "skill_name": "ugc-video-prompt",
+  "evals": [
+    {
+      "id": 1,
+      "name": "product-unboxing-veo",
+      "prompt": "帮我写一个 UGC 短视频 prompt，用 Veo 拍一个开箱视频：一个香薰蜡烛，玻璃杯装的，木盖，要那种真实的种草感",
+      "expected_output": "Veo-targeted UGC unboxing prompt: script/timecode form, real-feel anchors, Character says: dialogue without quotes + no-captions directive, @product placeholder, 9:16/duration note",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "grwm-tryon-no-model-specified",
+      "prompt": "I want a TikTok get-ready-with-me try-on video prompt. Girl trying on a oversized leather jacket with a mini skirt, playful chaotic energy, a friend interrupts. Make it feel real not like an ad.",
+      "expected_output": "UGC GRWM script-form prompt, defaults to a native-audio model (Veo) since none named, playful interruption beat, real-feel anchors, @avatar placeholder, casual self-interrupting dialogue",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "product-review-kling-chinese",
+      "prompt": "用可灵做一个产品测评短视频的提示词，一款多彩的儿童运动鞋，鞋底是透明的能看到里面的小装饰，要竖屏，主播拿着鞋对镜头展示",
+      "expected_output": "Kling-targeted prompt using 镜头+光影+主体+运动+场景+氛围 formula, i2v 9:16 first-frame note or aspect_ratio, Elements/asset note, @product placeholder, audio handling for Kling version",
+      "files": []
+    }
+  ]
+}
