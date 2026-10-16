@@ -11,3 +11,10 @@ Third-party skills vendored from public GitHub repos (see each folder's LICENSE)
 | cinematic-video-prompt | https://github.com/Rylaispirit/cinematic-video-prompt-skill |
 
 Rendering skills need an API key in the environment (e.g. `FAL_KEY`, `GEMINI_API_KEY`, `KLING_ACCESS_KEY`/`KLING_SECRET_KEY`).
+
+## UI design & animation skills
+
+From https://github.com/emilkowalski/skills (MIT, uploaded as `skills-main.zip`):
+animate, animate-expo, animation-performance, animation-vocabulary, apple-design, ask-sonner, break-ui,
+emil-design-eng, find-animation-opportunities, improve-animations, mobile-native, pick-ui-library,
+prototype, review-animations, write-swift.
