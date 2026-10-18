@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>כוח צל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Secular+One&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="gl" tabindex="0"></canvas>
+
+<!-- ============================ HUD ============================ -->
+<div id="hud" hidden>
+  <div id="cross"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><b></b></div>
+  <div id="hitm"><i></i><i></i><i></i><i></i></div>
+  <div id="dmgRing"></div>
+  <div id="grenadeWarn" hidden><span>רימון</span></div>
+
+  <div id="compass" dir="ltr"><div id="compStrip"></div><i id="compTick"></i><span id="compDeg" class="mono">000</span></div>
+
+  <div id="radarBox"><canvas id="radar" width="200" height="200"></canvas><div id="radarInfo" class="mono"></div></div>
+
+  <div id="obj">
+    <div class="eyebrow" id="objTag">משימה</div>
+    <div id="objTitle"></div>
+    <div id="objText"></div>
+  </div>
+  <div id="feed"></div>
+
+  <div id="squad">
+    <div class="eyebrow">צוות · <span id="orderName">עקבו אחריי</span></div>
+    <div id="squadCards"></div>
+  </div>
+
+  <div id="streaks"></div>
+
+  <div id="health">
+    <div id="stance" class="mono">עמידה</div>
+    <div id="hpBar"><i id="hpFill"></i></div>
+    <span id="hpNum" class="mono">100</span>
+  </div>
+
+  <div id="weapon">
+    <div id="wName"></div>
+    <div id="ammo" class="mono"><span id="aMag">30</span><span id="aRes">/ 240</span></div>
+    <div id="gear" class="mono"></div>
+  </div>
+
+  <div id="subs"></div>
+  <div id="banner"><div id="bannerT"></div><div id="bannerS"></div></div>
+  <div id="prompt"></div>
+  <div id="marker"><i></i><span class="mono"></span></div>
+  <div id="orderMark"><i></i><span></span></div>
+  <div id="tags"></div>
+  <div id="popups"></div>
+  <div id="downed" hidden><div class="dT">נפגעת</div><div id="downedTxt"></div><div class="dBar"><i id="downedFill"></i></div></div>
+  <div id="fps" class="mono"></div>
+</div>
+
+<!-- ============================ MENU ============================ -->
+<div id="menu">
+  <div class="mPanel">
+    <header class="brand">
+      <div class="eyebrow">יחידה מיוחדת · גזרת החוף</div>
+      <h1>כוח צל</h1>
+      <p class="lede">אתה מפקד צוות של ארבעה לוחמים: צלף, חובש, מקלען ולוחם נ״ט. כפר חוף, מחבלים על הגגות, שריון, מסוקי קרב, מטוסים וספינות טילים.</p>
+      <p class="touchNote" id="touchNote" hidden>המשחק דורש מחשב עם מקלדת ועכבר.</p>
+    </header>
+
+    <section class="block">
+      <h2>מבצעים</h2>
+      <div id="msnList"></div>
+    </section>
+
+    <section class="block">
+      <h2>חימוש</h2>
+      <div class="pickRow"><span class="pickLbl">נשק ראשי</span><div class="chips" id="pickPrimary"></div></div>
+      <div class="pickRow"><span class="pickLbl">משגר</span><div class="chips" id="pickLauncher"></div></div>
+      <p class="fine">משני: Mk23 עם משתיק · 3 רימוני רסס · 2 רימוני עשן · 2 מטעני C4. בארגז התחמושת בבסיס אפשר להחליף נשק ראשי.</p>
+    </section>
+
+    <section class="block">
+      <h2>הצוות שלך</h2>
+      <div class="roster">
+        <div><b>עידו</b><span>צלף · מחסל מטרות באיכות: אר-פי-ג׳י וצלפים על גגות</span></div>
+        <div><b>נועם</b><span>חובש · מטפל בך ובצוות, מחייה פצועים, זורק עשן</span></div>
+        <div><b>אביתר</b><span>מקלען מאג · אש חיפוי ודיכוי, משמיד רכבים קלים</span></div>
+        <div><b>יונתן</b><span>נ״ט · טנקים, נגמ״שים ומסוקים בלבד</span></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>הגדרות</h2>
+      <div class="setGrid">
+        <label for="setSens">רגישות עכבר <output id="outSens" class="mono"></output></label>
+        <input type="range" id="setSens" min="0.3" max="2.5" step="0.05">
+        <label for="setVol">עוצמת שמע <output id="outVol" class="mono"></output></label>
+        <input type="range" id="setVol" min="0" max="1" step="0.05">
+        <label for="setQual">גרפיקה</label>
+        <select id="setQual"><option value="high">גבוהה</option><option value="medium">בינונית</option><option value="low">ביצועים</option></select>
+        <label for="setDiff">רמת קושי</label>
+        <select id="setDiff"><option value="easy">טירון</option><option value="normal">לוחם</option><option value="veteran">ותיק</option></select>
+        <label for="setVoice">קריאות קשר קוליות</label>
+        <select id="setVoice"><option value="1">פעיל</option><option value="0">כבוי</option></select>
+      </div>
+    </section>
+
+    <section class="block keys">
+      <h2>שליטה</h2>
+      <div class="kGrid">
+        <span><kbd>W A S D</kbd>תנועה</span><span><kbd>Shift</kbd>ספרינט / עצירת נשימה בכוונת</span>
+        <span><kbd>Space</kbd>קפיצה · דילוג מכשול</span><span><kbd>C</kbd>כריעה · החלקה בספרינט</span>
+        <span><kbd>Z</kbd>שכיבה</span><span><kbd>עכבר</kbd>ירי · כוונת</span>
+        <span><kbd>R</kbd>טעינה</span><span><kbd>Q</kbd>ראשי ↔ אקדח</span>
+        <span><kbd>X</kbd>משגר</span><span><kbd>גלגלת</kbd>החלפת נשק</span>
+        <span><kbd>G</kbd>רימון רסס</span><span><kbd>H</kbd>רימון עשן</span>
+        <span><kbd>B</kbd>הנחת C4</span><span><kbd>F</kbd>פיצוץ C4</span>
+        <span><kbd>V</kbd>סכין</span><span><kbd>E</kbd>החייאה · תחמושת · שחרור</span>
+        <span><kbd>1</kbd>פקודה: נעו לנקודה</span><span><kbd>2</kbd>פקודה: אש חיפוי</span>
+        <span><kbd>3</kbd>פקודה: החזיקו עמדה</span><span><kbd>4</kbd>פקודה: ריכוז אש</span>
+        <span><kbd>5</kbd>פקודה: עקבו אחריי</span><span><kbd>6–9</kbd>רצפי הריגה</span>
+      </div>
+    </section>
+    <footer class="fine" id="bestLine"></footer>
+  </div>
+</div>
+
+<!-- ============================ BRIEFING ============================ -->
+<div id="brief" class="overlay" hidden>
+  <div class="card">
+    <div class="eyebrow" id="bTag"></div>
+    <h2 id="bTitle"></h2>
+    <div class="bMeta mono" id="bMeta"></div>
+    <p id="bText"></p>
+    <ul id="bGoals"></ul>
+    <div class="btns"><button id="bGo" class="primary">פריסה</button><button id="bBack">חזרה</button></div>
+    <p class="fine">לחיצה על פריסה נועלת את העכבר על המשחק. Esc משהה.</p>
+  </div>
+</div>
+
+<div id="pause" class="overlay" hidden>
+  <div class="card small">
+    <div class="eyebrow">המשחק מושהה</div>
+    <h2 id="pTitle"></h2>
+    <div class="btns col"><button id="pResume" class="primary">המשך</button><button id="pRestart">התחל מחדש</button><button id="pMenu">תפריט ראשי</button></div>
+  </div>
+</div>
+
+<div id="end" class="overlay" hidden>
+  <div class="card">
+    <div class="eyebrow" id="eTag"></div>
+    <h2 id="eTitle"></h2>
+    <p id="eText"></p>
+    <div class="stats mono" id="eStats"></div>
+    <div class="btns"><button id="eNext" class="primary">המבצע הבא</button><button id="eRetry">שוב</button><button id="eMenu">תפריט ראשי</button></div>
+  </div>
+</div>
+
+<div id="loading" class="overlay"><div class="card small"><div class="eyebrow">טוען זירה</div><h2>כוח צל</h2><p id="loadErr" hidden>לא ניתן לטעון את מנוע התלת־ממד. בדקו חיבור לאינטרנט ורעננו.</p></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>window.THREE||document.write('<script src="vendor/three.min.js"><\/script>')</script>
+<script src="js/Engine.js"></script>
+<script src="js/Audio.js"></script>
+<script src="js/World.js"></script>
+<script src="js/Actors.js"></script>
+<script src="js/SquadAI.js"></script>
+<script src="js/EnemyAI.js"></script>
+<script src="js/Player.js"></script>
+<script src="js/WeaponSystem.js"></script>
+<script src="js/BattlefieldManager.js"></script>
+<script src="js/HUD.js"></script>
+<script src="js/Missions.js"></script>
+<script src="js/Main.js"></script>
+</body>
+</html>
