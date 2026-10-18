@@ -31,6 +31,7 @@ Three.js נטען מ־cdnjs, ואם אין אינטרנט נטען העותק ה
 
 `assets/soldier.glb.js` — דמות Soldier מתוך דוגמאות three.js (MIT), מוטמעת כקובץ JS כדי לעבוד גם מפתיחה מקומית.
 `assets/waternormals.js` — מפת נורמלים למים מאותו מקור.
+`assets/sky_hdr.js`, `assets/ph_textures.js`, `assets/ph_models.js` — שמיים (HDRI kloofendal_48d_partly_cloudy_puresky), טקסטורות צילום (gravelly_sand, white_plaster_rough_02, asphalt_02, rough_concrete, worn_corrugated_iron, metal_plate) ומודלים (ארגז צבאי, ג׳ריקן, חבית, צמיג, ארגז תחמושת) מ־Poly Haven, ברישיון CC0.
 
 ## שליטה
 

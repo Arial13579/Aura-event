@@ -218,6 +218,12 @@ kbd{font-family:var(--mono);font-size:11px;background:rgba(236,229,207,.08);bord
   .roster,.kGrid,.setGrid{grid-template-columns:1fr}
   .stats{grid-template-columns:1fr 1fr}
 }
+@media (max-height:800px){
+  #radarBox,#radar{width:150px} #radar{height:150px}
+  #squad{top:200px;width:180px} #streaks,#health{width:180px}
+  .sq{padding:4px 8px;margin-bottom:3px} .sq .st{display:none}
+  #streaks{bottom:72px} .stk{padding:2px 8px}
+}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01s!important;transition-duration:.01s!important}
 }

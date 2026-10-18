@@ -234,7 +234,9 @@ function interactGeneric(dt) {
   return false;
 }
 function dropAmmo(p) {
-  const g = new THREE.Group(); box(g, .45, .28, .3, 0x4a5530); box(g, .46, .06, .31, 0xc9a23a, 0, .1, 0); g.position.set(p.x, .35, p.z); shadows(g); scene.add(g);
+  let g = propClone('ammo_box');
+  if (!g) { g = new THREE.Group(); box(g, .45, .28, .3, 0x4a5530); box(g, .46, .06, .31, 0xc9a23a, 0, .1, 0); shadows(g); }
+  g.position.set(p.x, .35, p.z); scene.add(g);
   pickups.push({ m: g, t: 30 });
 }
 function onEnemyKilled(e, src, head) {

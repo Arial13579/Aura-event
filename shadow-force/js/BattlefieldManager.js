@@ -173,7 +173,7 @@ function pushFromVehicles(p, r) {
 class Veh {
   constructor(type, team, x, z, yaw = 0, path = null, loop = false) {
     const T = VT[type]; this.T = T; this.type = type; this.team = team; this.isVeh = true;
-    this.g = shadows(T.build(), true, false); this.u = this.g.userData; this.g.rotation.order = 'YXZ';
+    this.g = vehicleSkin(shadows(T.build(), true, false)); this.u = this.g.userData; this.g.rotation.order = 'YXZ';
     this.pos = this.g.position; this.air = !!T.air; this.pos.set(x, this.air ? 45 : 0, z); this.g.rotation.y = yaw;
     this.hp = this.max = T.hp; this.alive = true; this.rad = T.rad; this.armorB = T.armorB; this.armorX = T.armorX;
     this.path = path; this.loop = loop; this.pi = 0; this.speed = T.speed || 0;

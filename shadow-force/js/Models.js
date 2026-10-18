@@ -5,9 +5,57 @@
    so hands grip the rifle and knees bend when crouching, and gloved
    first-person arms built from the same rig.
    ===================================================================== */
-const Models = { ready: false, soldier: null, clips: {}, mats: {} };
+const Models = { ready: false, soldier: null, clips: {}, mats: {}, props: {}, propSize: {} };
 function b64buf(s) { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
-function loadModels() {
+function loadModels() { return Promise.all([loadSoldier(), loadProps()]); }
+/* Poly Haven CC0 props (glTF with embedded textures) */
+function loadProps() {
+  if (!window.PH_MODELS || !THREE.GLTFLoader) return Promise.resolve();
+  const loader = new THREE.GLTFLoader();
+  return Promise.all(Object.entries(window.PH_MODELS).map(([k, json]) => new Promise(res => {
+    try {
+      loader.parse(json, '', g => {
+        g.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material) o.material.envMapIntensity = .8; } });
+        Models.props[k] = g.scene;
+        const b = new THREE.Box3().setFromObject(g.scene); Models.propSize[k] = { size: b.getSize(new V3()), min: b.min.clone() };
+        res();
+      }, e => { console.warn('prop', k, e); res(); });
+    } catch (e) { console.warn('prop', k, e); res(); }
+  })));
+}
+function propClone(k) { const s = Models.props[k]; return s ? s.clone() : null; }
+/* photographed PBR surfaces (Poly Haven CC0): one decoded image shared by every repeat variant */
+const _phImg = {};
+function phTex(name, kind, rep, srgb) {
+  const src = window.PH_TEX && PH_TEX[name] && PH_TEX[name][kind]; if (!src) return null;
+  const key = name + kind;
+  let e = _phImg[key];
+  if (!e) { const img = new Image(); e = _phImg[key] = { img, texs: [] }; img.onload = () => { for (const t of e.texs) t.needsUpdate = true; }; img.src = src; }
+  const t = new THREE.Texture(e.img); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = Math.min(8, maxAniso);
+  if (rep) t.repeat.set(rep[0], rep[1]);
+  if (srgb) t.encoding = THREE.sRGBEncoding;
+  if (e.img.complete && e.img.naturalWidth) t.needsUpdate = true;
+  e.texs.push(t); return t;
+}
+function phMat(name, o = {}) {
+  if (!PBR || !window.PH_TEX || !PH_TEX[name]) return null;
+  const rep = o.rep;
+  return new THREE.MeshStandardMaterial(Object.assign({ map: phTex(name, 'diff', rep, true), normalMap: phTex(name, 'nor', rep), roughnessMap: phTex(name, 'rough', rep), roughness: 1, metalness: 0 }, o.mat || {}));
+}
+const _skinC = {};
+function vehicleSkin(root) {
+  if (!PBR || !window.PH_TEX) return root;
+  root.traverse(o => {
+    if (!o.isMesh || !o.material || !o.material.isMeshStandardMaterial || o.material.map) return;
+    const c = o.material.color, lum = c.r + c.g + c.b;
+    if (lum < .03 || o.material.transparent) return;
+    const k = c.getHexString();
+    if (!_skinC[k]) _skinC[k] = new THREE.MeshStandardMaterial({ color: c.clone(), normalMap: phTex('metal_plate', 'nor'), normalScale: new THREE.Vector2(.45, .45), roughnessMap: phTex('metal_plate', 'rough'), roughness: .95, metalness: .3 });
+    o.material = _skinC[k];
+  });
+  return root;
+}
+function loadSoldier() {
   return new Promise(res => {
     if (!window.ASSET_SOLDIER || !THREE.GLTFLoader || !THREE.SkeletonUtils) return res(false);
     try {
