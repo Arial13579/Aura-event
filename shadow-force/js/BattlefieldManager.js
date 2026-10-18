@@ -515,7 +515,7 @@ const STREAKS = [
 const streakReady = {};
 function streakAdd() {
   P.streak++;
-  for (const s of STREAKS) if (P.streak === s.need) { streakReady[s.id] = (streakReady[s.id] || 0) + 1; HUD.banner(s.name, `זמין · מקש ${s.key}`, 2.4); sfx('ui', .8); }
+  for (const s of STREAKS) if (P.streak === s.need) { streakReady[s.id] = (streakReady[s.id] || 0) + 1; HUD.banner(s.name, `מוכן לשימוש · מקש ${s.key}`, 2.4, 'רצף הריגה'); sfx('ui', .8); }
   if (P.streak >= 12) P.streak = 0;
   HUD.streaks();
 }

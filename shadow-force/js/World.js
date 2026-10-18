@@ -73,7 +73,7 @@ function buildGround() {
   for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i); const n = .82 + .1 * Math.sin(x * .013 + Math.cos(z * .017) * 2) + .08 * Math.sin(z * .041 + x * .007); cols[i * 3] = n; cols[i * 3 + 1] = n * .97; cols[i * 3 + 2] = n * .92; }
   geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
   texSand.repeat.set(210, 210);
-  const gm = phMat('gravelly_sand', { rep: [440, 440], mat: { color: col(0xd8d0c2).multiplyScalar(1.08), vertexColors: true } });
+  const gm = phMat('gravelly_sand', { rep: [440, 440], mat: { color: col(0xc9c4bb).multiplyScalar(1.1), vertexColors: true } });
   const m = new THREE.Mesh(geo, gm || surf({ color: col(0xffffff), map: texSand }));
   m.receiveShadow = true; scene.add(m);
 }
@@ -109,7 +109,7 @@ function buildRoads() {
 
 /* ---------- town ---------- */
 const B_COLS = [0xdccbaa, 0xcfbd98, 0xe4dccb, 0xc2b08e, 0xd6c4a2, 0xbfb39b, 0xe0cfb0];
-const B_TINT = [0xfff1d6, 0xf7e4c2, 0xfff8ec, 0xecd8b4, 0xf6e6c8, 0xe9dcc6, 0xfbeacc];
+const B_TINT = [0xfff6ec, 0xf8ece0, 0xffffff, 0xf0e4d4, 0xfaf0e6, 0xece6de, 0xfdf3e8];
 let bMats = null, CONC = null;
 const concOr = h => CONC ? (CONC_C[h] || (CONC_C[h] = Object.assign(CONC.clone(), { color: col(h) }))) : lam(h);
 const CONC_C = {};

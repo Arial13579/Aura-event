@@ -168,6 +168,28 @@ const WS = {
 };
 const VM = { root: new THREE.Group(), models: {} };
 wScene.add(VM.root);
+/* white silhouettes of each weapon, rendered from the first-person models for HUD and menu */
+const WICON = {};
+function makeWeaponIcons() {
+  const W = 360, H = 120, rt = new THREE.WebGLRenderTarget(W, H), sc = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, .01, 20);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffffff }), px = new Uint8Array(W * H * 4);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
+  const prevClear = renderer.getClearColor(new THREE.Color()).clone(), prevA = renderer.getClearAlpha();
+  for (const id in VM.models) {
+    const g = VM.models[id].g.clone(true); g.visible = true; g.position.set(0, 0, 0);
+    g.traverse(o => { if (o.isMesh) o.material = mat; if (o.isSprite) o.visible = false; });
+    g.rotation.set(0, -PI / 2, 0); sc.add(g); g.updateMatrixWorld(true);
+    const b = new THREE.Box3(); g.traverse(o => { if (o.isMesh && !o.isInstancedMesh && o.visible !== false) b.expandByObject(o); });
+    const sz = b.getSize(new V3()), c = b.getCenter(new V3());
+    let hw = sz.x / 2 * 1.04, hh = sz.y / 2 * 1.08; if (hw / hh < W / H) hw = hh * W / H; else hh = hw * H / W;
+    Object.assign(cam, { left: -hw, right: hw, top: hh, bottom: -hh }); cam.position.set(c.x, c.y, c.z + 6); cam.lookAt(c); cam.updateProjectionMatrix();
+    renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(sc, cam);
+    renderer.readRenderTargetPixels(rt, 0, 0, W, H, px); renderer.setRenderTarget(null);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, j = ((H - 1 - y) * W + x) * 4; img.data[j] = img.data[j + 1] = img.data[j + 2] = 255; img.data[j + 3] = px[i + 3]; }
+    cx.putImageData(img, 0, 0); WICON[id] = cv.toDataURL('image/png'); sc.remove(g);
+  }
+  renderer.setClearColor(prevClear, prevA); rt.dispose();
+}
 function buildViewmodels() {
   FPArms.build(); for (const id in WDEF) { const b = WDEF[id].build(); b.g.visible = false; VM.root.add(b.g); VM.models[id] = b; } }
 function mkSlot(id) { const d = WDEF[id]; return { id, d, mag: d.mag, res: d.res, b: VM.models[id] }; }

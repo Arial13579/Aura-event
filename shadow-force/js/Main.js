@@ -4,18 +4,56 @@
    and the main loop (simulation → render → HUD).
    ===================================================================== */
 const menuEl = $('menu'), briefEl = $('brief'), pauseEl = $('pause'), endEl = $('end');
-let pendingMission = 0, menuAng = 0;
+let menuAng = 0;
 
 /* ---------- menu ---------- */
-function buildMenu() {
-  const done = store('sf.done') || [];
-  $('msnList').innerHTML = MISSIONS.map((m, i) => `<button class="msn" data-i="${i}"><span class="num">${m.survival ? '∞' : String(i + 1).padStart(2, '0')}</span><span><b>${m.name}</b><small>${m.place}</small></span><span class="tag">${done.includes(i) ? 'הושלם' : m.time}</span></button>`).join('');
-  $('msnList').querySelectorAll('.msn').forEach(b => b.addEventListener('click', () => openBrief(+b.dataset.i)));
-  const chips = (el, list, key) => {
-    el.innerHTML = list.map(id => `<button type="button" data-id="${id}" aria-pressed="${settings[key] === id}">${WDEF[id].name}<small>${WDEF[id].cls}</small></button>`).join('');
-    el.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { settings[key] = b.dataset.id; saveSettings(); el.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); sfx('ui', .6); }));
+let menuInit = false, selMission = 0, MSHOT = [];
+const SHOT_CAM = [[0, 16, 70, 0, 4, -30], [-36, 20, -44, -72, 2, -96], [-64, 12, -6, -96, 3, -50], [34, 9, 108, 0, 4, 40], [90, 44, -150, 0, 0, -20]];
+function captureMissionShots() {
+  const cv = document.createElement('canvas'); cv.width = 640; cv.height = 360; const cx = cv.getContext('2d');
+  MSHOT = SHOT_CAM.map(([x, y, z, lx, ly, lz]) => {
+    camera.fov = 62; camera.updateProjectionMatrix();
+    camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); camera.updateMatrixWorld(); sunFollow(_tv.set(lx, 0, lz));
+    skyMesh.position.copy(camera.position); renderFrame(false);
+    try { cx.drawImage(canvas, 0, 0, 640, 360); return cv.toDataURL('image/jpeg', .82); } catch (e) { return ''; }
+  });
+  camera.fov = 70; camera.updateProjectionMatrix();
+}
+function showTab(t) {
+  document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  document.querySelectorAll('#mBody .tab').forEach(sec => { sec.hidden = sec.id !== 'tab-' + t; });
+}
+function weaponStats(d) {
+  if (d.proj) return [['נזק', 1], ['רדיוס פיצוץ', .85], ['הנחיה', d.proj === 'smaw' ? 1 : .15], ['תחמושת', d.res / 8], ['ניידות', .6]];
+  return [['נזק', clamp(Math.sqrt(d.dmg * (d.pellets || 1) / 260), .08, 1)], ['קצב אש', clamp(d.rpm / 950, .05, 1)], ['טווח', clamp(d.vel / 900 * (d.scope ? 1.1 : 1), .2, 1)], ['שליטה', clamp(1 - d.recoil / .075, .05, 1)], ['ניידות', d.heavy ? .45 : d.scope ? .6 : .85]];
+}
+function showWeaponDetail(id) {
+  const d = WDEF[id];
+  $('wDetail').innerHTML = `<img src="${WICON[id] || ''}" alt=""><h2>${d.name}</h2><div class="cls">${d.cls} · מחסנית ${d.mag}${d.scope ? ' · כוונת טלסקופית' : ''}${d.bolt ? ' · בריח' : ''}</div>`
+    + weaponStats(d).map(([k, v]) => `<div class="stat"><span>${k}</span><span class="t"><i style="width:${Math.round(v * 100)}%"></i></span><span>${Math.round(v * 100)}</span></div>`).join('')
+    + `<p class="fine" style="margin-top:12px">אקדח Mk23 עם משתיק · 3 רסס · 2 עשן · 2 מטעני C4. בארגז התחמושת בבסיס מחליפים נשק ראשי עם Y.</p>`;
+}
+function renderLoadout() {
+  const cards = (el, list, key) => {
+    el.innerHTML = list.map(id => `<button type="button" class="wCard" data-id="${id}" aria-pressed="${settings[key] === id}"><img src="${WICON[id] || ''}" alt=""><b>${WDEF[id].name}</b><small>${WDEF[id].cls}</small></button>`).join('');
+    el.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => { settings[key] = b.dataset.id; saveSettings(); sfx('ui', .6); renderLoadout(); showWeaponDetail(b.dataset.id); selectMission(selMission); });
+      b.addEventListener('mouseenter', () => showWeaponDetail(b.dataset.id));
+      b.addEventListener('focus', () => showWeaponDetail(b.dataset.id));
+    });
   };
-  chips($('pickPrimary'), PRIMARIES, 'primary'); chips($('pickLauncher'), LAUNCHERS, 'launcher');
+  cards($('pickPrimary'), PRIMARIES, 'primary'); cards($('pickLauncher'), LAUNCHERS, 'launcher');
+}
+function selectMission(i) {
+  selMission = i; const m = MISSIONS[i];
+  document.querySelectorAll('.msn').forEach(b => b.setAttribute('aria-pressed', +b.dataset.i === i));
+  $('bTag').textContent = m.tag; $('bTitle').textContent = m.name; $('bMeta').textContent = `${m.place} · שעה ${m.time}`;
+  $('bText').textContent = m.brief; $('bGoals').innerHTML = m.goals.map(g => `<li>${g}</li>`).join('');
+  $('bLoad').innerHTML = `<img src="${WICON[settings.primary] || ''}" alt="">${WDEF[settings.primary].name} · <img src="${WICON[settings.launcher] || ''}" alt="">${WDEF[settings.launcher].name}`;
+}
+function initMenu() {
+  if (menuInit) return; menuInit = true;
+  document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => { initAudio(); sfx('ui', .5); showTab(b.dataset.tab); }));
   const sens = $('setSens'), vol = $('setVol'), q = $('setQual'), d = $('setDiff'), v = $('setVoice');
   sens.value = settings.sens; vol.value = settings.vol; q.value = settings.quality; d.value = settings.diff; v.value = settings.voice ? '1' : '0';
   const out = () => { $('outSens').textContent = (+settings.sens).toFixed(2); $('outVol').textContent = Math.round(settings.vol * 100) + '%'; };
@@ -25,16 +63,21 @@ function buildMenu() {
   q.addEventListener('change', () => { settings.quality = q.value; saveSettings(); applyQuality(); });
   d.addEventListener('change', () => { settings.diff = d.value; saveSettings(); });
   v.addEventListener('change', () => { settings.voice = v.value === '1'; saveSettings(); });
-  const best = store('sf.bestWave'); $('bestLine').textContent = best ? `שיא הישרדות: גל ${best}` : 'הנתונים נשמרים רק בדפדפן הזה.';
+  $('bGo').addEventListener('click', () => deploy(selMission));
   if (matchMedia('(pointer: coarse)').matches && !matchMedia('(pointer: fine)').matches) $('touchNote').hidden = false;
 }
-function openBrief(i) {
-  initAudio(); sfx('ui', .7);
-  pendingMission = i; const m = MISSIONS[i];
-  $('bTag').textContent = m.tag; $('bTitle').textContent = m.name; $('bMeta').textContent = `${m.place} · שעה ${m.time} · ${WDEF[settings.primary].name} + ${WDEF[settings.launcher].name}`;
-  $('bText').textContent = m.brief; $('bGoals').innerHTML = m.goals.map(g => `<li>${g}</li>`).join('');
-  briefEl.hidden = false; $('bGo').focus();
+function buildMenu() {
+  initMenu();
+  const done = store('sf.done') || [];
+  $('msnList').innerHTML = MISSIONS.map((m, i) => `<button class="msn${m.survival ? ' wide' : ''}" data-i="${i}" style="background-image:url('${MSHOT[i] || ''}')"><span class="num">${m.survival ? '∞' : String(i + 1).padStart(2, '0')}</span>${done.includes(i) ? '<span class="done">הושלם</span>' : ''}<span class="txt"><b>${m.name}</b><small>${m.place}</small></span></button>`).join('');
+  $('msnList').querySelectorAll('.msn').forEach(b => {
+    b.addEventListener('click', () => { initAudio(); sfx('ui', .6); selectMission(+b.dataset.i); });
+    b.addEventListener('dblclick', () => deploy(+b.dataset.i));
+  });
+  renderLoadout(); showWeaponDetail(settings.primary); selectMission(selMission);
+  const best = store('sf.bestWave'); $('bestLine').textContent = best ? `שיא הישרדות: גל ${best}` : 'ההתקדמות נשמרת בדפדפן הזה בלבד';
 }
+function openBrief(i) { initAudio(); sfx('ui', .7); showTab('ops'); selectMission(i); }
 function deploy(i) {
   initAudio();
   briefEl.hidden = endEl.hidden = pauseEl.hidden = true; menuEl.hidden = true;
@@ -73,7 +116,7 @@ const STREAK_KEYS = { Digit6: 'uav', Digit7: 'air', Digit8: 'apache', Digit9: 'n
 addEventListener('keydown', e => {
   if (G.state !== 'play') {
     if (e.code === 'Escape' && G.state === 'pause') resumeGame();
-    if (e.code === 'Enter' && !briefEl.hidden) deploy(pendingMission);
+    if (e.code === 'Enter' && G.state === 'menu' && !menuEl.hidden) deploy(selMission);
     return;
   }
   if (['Space', 'Tab', 'KeyF', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9'].includes(e.code)) e.preventDefault();
@@ -116,12 +159,10 @@ addEventListener('wheel', e => { if (G.state === 'play' && Math.abs(e.deltaY) > 
 addEventListener('blur', () => { if (G.state === 'play') pauseGame(); });
 addEventListener('resize', resize);
 
-$('bGo').addEventListener('click', () => deploy(pendingMission));
-$('bBack').addEventListener('click', () => { briefEl.hidden = true; sfx('ui', .5); });
 $('pResume').addEventListener('click', resumeGame);
 $('pRestart').addEventListener('click', () => deploy(G.missionIdx));
 $('pMenu').addEventListener('click', toMenu);
-$('eNext').addEventListener('click', () => openBrief(Math.min(MISSIONS.length - 1, G.missionIdx + 1)));
+$('eNext').addEventListener('click', () => { const n = Math.min(MISSIONS.length - 1, G.missionIdx + 1); toMenu(); openBrief(n); });
 $('eRetry').addEventListener('click', () => deploy(G.missionIdx));
 $('eMenu').addEventListener('click', toMenu);
 
@@ -168,13 +209,19 @@ function boot2() {
   try {
     buildWorld();
     buildViewmodels();
+    makeWeaponIcons();
     HUD.init();
     applyQuality();
-    buildMenu();
     spawnAmbient();
-    G.state = 'menu';
-    $('loading').hidden = true;
-    requestAnimationFrame(t => { last = t; frame(t); });
+    const imgs = Object.values(_phImg).map(e => e.img.decode ? e.img.decode().catch(() => { }) : Promise.resolve());
+    Promise.race([Promise.all(imgs), new Promise(r => setTimeout(r, 6000))]).then(() => {
+      for (const e of Object.values(_phImg)) for (const t of e.texs) t.needsUpdate = true;
+      captureMissionShots();
+      buildMenu();
+      G.state = 'menu';
+      $('loading').hidden = true;
+      requestAnimationFrame(t => { last = t; frame(t); });
+    });
   } catch (err) {
     console.error(err);
     $('loadErr').hidden = false; $('loadErr').textContent = 'שגיאה בטעינת הזירה: ' + err.message;

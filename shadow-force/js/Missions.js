@@ -28,7 +28,7 @@ const _cen = new V3();
 function nearestAlive(list) { let b = null, bd = 1e9; for (const v of list) if (v.alive) { const d = dxz(v.pos, P.pos); if (d < bd) { bd = d; b = v; } } return b ? b.pos : null; }
 function spawnHind() {
   const h = new Veh('hind', 'enemy', -320, -260, 0); h.pos.y = 70; h.center.set(0, 0, -10); h.radius = 85; h.alt = 38; h.angSpd = .11;
-  HUD.banner('מסוק קרב של האויב', 'Mi-24 נכנס לגזרה · נ״ט, RPG או SMAW', 3);
+  HUD.banner('מסוק קרב של האויב', 'Mi-24 נכנס לגזרה · נ״ט, RPG או SMAW', 3, 'אזהרה');
   later(2, () => callout(squad.members.find(a => a.alive && !a.downed), 'heli', true));
   return h;
 }
@@ -190,7 +190,7 @@ function startMission(i) {
   for (let k = 0; k < (m.initial || 0); k++) { const p = pickSpawn(m.zone, 55); if (p) spawnEnemy(p, rollRole()); }
   later(1.2, () => { const f = new V3(-60, 0, 500), t = new V3(40, 0, -600); spawnJet(f, t, 60, { life: 7 }); later(.35, () => spawnJet(f.clone().add(new V3(25, 0, 20)), t.clone().add(new V3(25, 0, 0)), 66, { life: 7 })); });
   HUD.show(true); HUD.streaks();
-  HUD.banner(def.name, def.place + ' · ' + def.time, 3.5);
+  HUD.banner(def.name, def.place + ' · ' + def.time, 4, def.tag);
   later(1.5, () => Voice.say('צוות, זזים. שמרו על מרווחים', 'Team, move out. Keep your spacing', .95, true));
   G.state = 'play';
   sunFollow(P.pos);
@@ -204,7 +204,7 @@ function updateMission(dt) {
   if (!prompted) HUD.prompt(null);
   for (let i = pickups.length - 1; i >= 0; i--) {
     const p = pickups[i]; p.t -= dt; p.m.rotation.y += dt * 2; p.m.position.y = .35 + Math.sin(G.time * 3 + i) * .08;
-    if (dxz(p.m.position, P.pos) < 1.6 && !P.downed) { refillAll(false); HUD.popup('+ תחמושת'); sfx('magIn', .6); scene.remove(p.m); pickups.splice(i, 1); continue; }
+    if (dxz(p.m.position, P.pos) < 1.6 && !P.downed) { refillAll(false); HUD.score('', 'תחמושת'); sfx('magIn', .6); scene.remove(p.m); pickups.splice(i, 1); continue; }
     if (p.t <= 0) { scene.remove(p.m); pickups.splice(i, 1); }
   }
   const r = m.def.update(m, dt);
@@ -222,7 +222,7 @@ function interactGeneric(dt) {
   for (const c of ammoCrates) {
     if (dxz(c, P.pos) > 2.8) continue;
     HUD.prompt('<kbd>E</kbd> תחמושת מלאה &nbsp; <kbd>Y</kbd> החלפת נשק ראשי');
-    if (keys.KeyE && !ammoLatch) { ammoLatch = true; refillAll(true); HUD.popup('תחמושת מלאה'); sfx('magIn', .8); }
+    if (keys.KeyE && !ammoLatch) { ammoLatch = true; refillAll(true); HUD.score('', 'תחמושת מלאה'); sfx('magIn', .8); }
     if (keys.KeyY && !armoryLatch) {
       armoryLatch = true;
       const i = (PRIMARIES.indexOf(WS.slots[0].id) + 1) % PRIMARIES.length;
@@ -239,27 +239,30 @@ function dropAmmo(p) {
   g.position.set(p.x, .35, p.z); scene.add(g);
   pickups.push({ m: g, t: 30 });
 }
+const ENEMY_NAMES = { rifle: 'מחבל', pkm: 'מקלען אויב', rpgE: 'משגר RPG', marksman: 'צלף אויב' };
 function onEnemyKilled(e, src, head) {
   const m = G.mission; if (!m) return;
   m.kills++;
+  const vic = ENEMY_NAMES[e.role] || 'מחבל';
   if (src === P) {
     P.kills++; if (head) P.heads++;
-    const pts = head ? 150 : 100; P.score += pts; HUD.popup('+' + pts + (head ? ' · ראש' : ''));
-    HUD.feed(`<span class="y">אתה</span> ⟵ מחבל${head ? ' · ירייה בראש' : ''}`, 'me');
+    const pts = head ? 150 : 100; P.score += pts;
+    HUD.score(pts, head ? 'ירייה בראש' : 'הריגה');
+    HUD.kill('אתה', 'y', WICON[WS.slots[WS.cur].id], vic, head, true);
     streakAdd();
     if (head && R() < .25) callout(squad.members.find(a => a.alive && !a.downed), 'good');
-  } else if (src && src.def) { HUD.feed(`<span class="a">${src.name}</span> ⟵ מחבל`); if (R() < .2) callout(src, 'kill'); }
-  else if (src && src.isVeh) HUD.feed(`<span class="a">${src.T.name}</span> ⟵ מחבל`);
-  else HUD.feed('מחבל חוסל', 's');
+  } else if (src && src.def) { HUD.kill(src.name, 'a', null, vic, head); if (R() < .2) callout(src, 'kill'); }
+  else if (src && src.isVeh) HUD.kill(src.T.name, 'a', null, vic, false);
+  else HUD.feed(`${vic} חוסל`, 's');
   if (R() < .28) dropAmmo(e.pos);
 }
 function onVehicleDestroyed(v, src) {
   const m = G.mission; if (!m || G.state !== 'play') return;
   if (v.team === 'enemy') {
     m.vehKills++;
-    if (src === P) { P.score += 500; HUD.popup('+500 · ' + v.T.name); streakAdd(); streakAdd(); HUD.feed(`<span class="y">אתה</span> ⟵ ${v.T.name}`, 'me'); }
-    else if (src && src.def) HUD.feed(`<span class="a">${src.name}</span> ⟵ ${v.T.name}`);
-    else if (src && src.isVeh) HUD.feed(`<span class="a">${src.T.name}</span> ⟵ ${v.T.name}`);
+    if (src === P) { P.score += 500; HUD.score(500, v.T.name + ' הושמד'); streakAdd(); streakAdd(); HUD.kill('אתה', 'y', WICON[WS.slots[WS.cur].id], v.T.name, false, true); }
+    else if (src && src.def) HUD.kill(src.name, 'a', null, v.T.name, false);
+    else if (src && src.isVeh) HUD.kill(src.T.name, 'a', null, v.T.name, false);
     else HUD.feed(`${v.T.name} הושמד`, 'y');
     callout(squad.members.find(a => a.alive && !a.downed), 'vehDown');
   } else HUD.feed(`${v.T.name} שלנו נפגע`, 'e');
