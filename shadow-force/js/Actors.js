@@ -20,7 +20,32 @@ const ROLE = {
 };
 
 /* ---------- soldier mesh ---------- */
+const GRIPS = { r: new V3(0, -.05, -.02), l: new V3(0, -.04, .36) };
+function rigGun(gun, team, role) {
+  const blk = std(0x1b1c1a, .5, .5), wood = std(0x6b4423, .7, .05), od = std(0x4e5236, .8, .1), tan = std(0x9a8662, .75, .1);
+  if (role === 'hostage') return;
+  if (role === 'rpgE') { cyl(gun, .05, .05, 1.0, od, .02, .1, .2, PI / 2); cyl(gun, 0, .085, .28, od, .02, .1, .82, PI / 2); box(gun, .1, .1, .2, wood, .02, .08, .1); return; }
+  if (role === 'sniper') { box(gun, .055, .085, 1.0, tan, 0, 0, .2); cyl(gun, .014, .014, .5, blk, 0, .01, .9, PI / 2); cyl(gun, .03, .03, .34, blk, 0, .085, .2, PI / 2); box(gun, .05, .1, .3, tan, 0, -.02, -.25); return; }
+  if (role === 'mg' || role === 'pkm') { box(gun, .085, .11, .55, blk, 0, 0, .15); cyl(gun, .018, .018, .55, blk, 0, .01, .65, PI / 2); box(gun, .1, .12, .14, team === 'enemy' ? wood : od, -.08, -.08, .1); box(gun, .06, .09, .26, team === 'enemy' ? wood : blk, 0, -.02, -.22); return; }
+  if (team === 'enemy') { box(gun, .055, .085, .5, blk, 0, 0, .12); box(gun, .062, .07, .22, wood, 0, -.005, .34); cyl(gun, .011, .011, .3, blk, 0, .01, .6, PI / 2); box(gun, .045, .085, .26, wood, 0, -.03, -.22); box(gun, .042, .17, .07, std(0x7a4422, .55, .05), 0, -.13, .2, .35); if (role === 'marksman') cyl(gun, .025, .025, .22, blk, 0, .08, .12, PI / 2); return; }
+  box(gun, .056, .08, .42, blk, 0, 0, .14); box(gun, .066, .072, .3, blk, 0, .004, .44); cyl(gun, .011, .011, .2, blk, 0, .01, .68, PI / 2);
+  box(gun, .045, .075, .22, blk, 0, -.012, -.18); box(gun, .042, .14, .07, blk, 0, -.1, .16, .18); box(gun, .03, .045, .05, blk, 0, .065, .1);
+}
+function makeRigSoldier(team, role) {
+  const g = new THREE.Group(); g.rotation.order = 'YXZ';
+  const hi = new THREE.Group(); g.add(hi);
+  const rig = new Rig(team === 'enemy' ? 'enemy' : role === 'hostage' ? 'hostage' : 'ally'); hi.add(rig.root);
+  const gun = new THREE.Group(); gun.position.set(.16, 1.3, .24); hi.add(gun); rigGun(gun, team, role);
+  if (role === 'at') cyl(hi, .065, .065, 1.15, std(0x4e5236, .8, .1), .05, 1.35, -.24, 0, 0, .45);
+  if (role === 'medic') { box(hi, .34, .4, .17, std(0x5f5f42, .9, 0), 0, 1.22, -.24); box(hi, .14, .14, .02, 0xf2f2f2, 0, 1.3, -.33); box(hi, .1, .03, .021, 0xc0201a, 0, 1.3, -.34); box(hi, .03, .1, .021, 0xc0201a, 0, 1.3, -.34); }
+  if (team === 'enemy') { const c = role === 'marksman' ? 0x5f5641 : pick([0x2a2a26, 0x3d3a2f, 0x6b6250]); sph(hi, .14, std(c, .95, 0), 0, 1.66, .01, 1.05, 1.1, 1.12, 10); }
+  const lo = new THREE.Group(); lo.visible = false; g.add(lo);
+  const lc = team === 'enemy' ? 0x3a3530 : 0x6a6a52; box(lo, .5, 1.45, .3, lc, 0, .78, 0); box(lo, .24, .3, .26, lc, 0, 1.68, 0);
+  shadows(lo, true, false); shadows(gun, true, false); hi.traverse(o => { if (o.isMesh && !o.isSkinnedMesh) o.castShadow = true; });
+  return { g, hi, lo, rig, gun, hip: null, tor: null };
+}
 function makeSoldier(team, role) {
+  if (Models.ready) return makeRigSoldier(team, role);
   const en = team === 'enemy', hs = role === 'hostage';
   const pal = hs ? { pant: 0x4a4a52, shirt: 0x9a8f7a, vest: 0x9a8f7a, skin: 0xb08a6a }
     : en ? { pant: 0x2e2c28, shirt: 0x3d3a33, vest: 0x24231f, skin: 0x1f1e1c, band: 0x3d7a32 }
@@ -177,6 +202,13 @@ class Soldier {
   }
   anim(dt, sp) {
     const m = this.m, ca = this.ca;
+    if (m.rig) {
+      let p = 0; if (this.target && this.see) { const t = this.target; p = Math.atan2(aimYOf(t) - (this.pos.y + 1.3), Math.max(1, dxz(t.pos, this.pos))); }
+      m.gun.rotation.x = damp(m.gun.rotation.x, -clamp(p, -.8, .8), 8, dt);
+      m.gun.position.y = 1.3 - ca * .45;
+      m.rig.update(dt, this.g, sp, ca, this.role === 'hostage' ? null : m.gun, GRIPS);
+      return;
+    }
     this.walk += dt * sp * 2.3;
     const a = Math.min(1, sp / 3) * .75, s = Math.sin(this.walk) * a;
     m.legL.rotation.x = s - ca * 1.1; m.legR.rotation.x = -s + ca * .25;

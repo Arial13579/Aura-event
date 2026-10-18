@@ -20,7 +20,7 @@ let water = null, waterBase = null, skyMesh = null, flag = null, flagBase = null
 
 function buildWorld() {
   const oldR = R; R = mulberry(20251018);
-  buildSky(); buildGround(); buildSea(); buildRoads();
+  buildSky(); buildEnvironment(skyMesh); buildGround(); buildSea(); buildRoads();
   buildTown(); buildBase(); buildProps(); buildShips();
   flushBatches(); buildCover();
   R = oldR;
@@ -42,12 +42,16 @@ function buildGround() {
   for (let i = 0; i < p.count; i++) p.setY(i, groundH(p.getX(i), p.getZ(i)));
   geo.computeVertexNormals();
   texSand.repeat.set(210, 210);
-  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: col(0xffffff), map: texSand }));
+  const m = new THREE.Mesh(geo, surf({ color: col(0xffffff), map: texSand }));
   m.receiveShadow = true; scene.add(m);
 }
 function buildSea() {
   const geo = new THREE.PlaneGeometry(1700, 760, 72, 30); geo.rotateX(-PI / 2); geo.translate(0, -1.15, -530);
-  water = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ color: col(0x2b6d84), specular: col(0xa8ccd6), shininess: 95, transparent: true, opacity: .94 }));
+  let nm = null;
+  if (window.ASSET_WATERNORMALS) { nm = new THREE.TextureLoader().load(window.ASSET_WATERNORMALS); nm.wrapS = nm.wrapT = THREE.RepeatWrapping; nm.repeat.set(60, 26); }
+  water = new THREE.Mesh(geo, PBR
+    ? new THREE.MeshStandardMaterial({ color: col(0x1f5a6c), roughness: .08, metalness: .15, normalMap: nm, normalScale: new THREE.Vector2(.6, .6), envMapIntensity: 1.4, transparent: true, opacity: .96 })
+    : new THREE.MeshPhongMaterial({ color: col(0x2b6d84), specular: col(0xa8ccd6), shininess: 95, transparent: true, opacity: .94 }));
   waterBase = Float32Array.from(geo.attributes.position.array);
   scene.add(water);
 }
@@ -55,13 +59,14 @@ function updateWater(t) {
   const p = water.geometry.attributes.position, a = p.array;
   for (let i = 0; i < a.length; i += 3) { const x = waterBase[i], z = waterBase[i + 2]; a[i + 1] = -1.15 + Math.sin(x * .05 + t * 1.1) * .26 + Math.cos(z * .07 + t * .8) * .22 + Math.sin((x + z) * .11 + t * 1.7) * .08; }
   p.needsUpdate = true; water.geometry.computeVertexNormals();
+  const nm = water.material.normalMap; if (nm) { nm.offset.set(t * .006, t * .011); }
 }
 function buildRoads() {
   texRoad.repeat.set(1, 1);
   const strip = (x, z, w, d) => {
     const g = new THREE.PlaneGeometry(w, d); g.rotateX(-PI / 2);
     const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 8, uv.getY(i) * d / 8);
-    const r = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: texRoad, polygonOffset: true, polygonOffsetFactor: -1 }));
+    const r = new THREE.Mesh(g, surf({ map: texRoad, polygonOffset: true, polygonOffsetFactor: -1 }));
     r.position.set(x, .03, z); r.receiveShadow = true; scene.add(r);
   };
   strip(0, -28, 10, 236); strip(0, -24, 292, 10); strip(0, -138, 292, 9); strip(-138, -34, 9, 216); strip(138, -34, 9, 216); strip(0, 72, 292, 9);
@@ -187,7 +192,7 @@ function plaza(cx, cz) {
   spawnPts.push(new V3(cx, 0, cz));
 }
 function buildTown() {
-  bMats = B_COLS.map(c => new THREE.MeshLambertMaterial({ color: col(c), map: texConc }));
+  bMats = B_COLS.map(c => surf({ color: col(c), map: texConc }));
   for (let i = -5; i <= 5; i++) for (let j = -5; j <= 2; j++) {
     if (i === 0 || j === -1) continue;
     const key = i + ',' + j, cx = i * 24, cz = j * 24;
@@ -222,12 +227,12 @@ function buildTown() {
 /* ---------- forward operating base ---------- */
 function container(x, z, ry, c, y = 0) {
   const geo = container.geo || (container.geo = boxUV(12.2, 2.6, 2.45, 2.4));
-  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: col(c), map: texCont }));
+  const m = new THREE.Mesh(geo, surf({ color: col(c), map: texCont }));
   m.position.set(x, y + 1.3, z); m.rotation.y = ry; m.castShadow = m.receiveShadow = true; scene.add(m);
   const v = Math.abs(Math.sin(ry)) > .5; addCol(x, z, v ? 2.45 : 12.2, v ? 12.2 : 2.45, y + 2.6, y);
 }
 function buildBase() {
-  const hm = new THREE.MeshLambertMaterial({ map: texHesco, color: col(0xffffff) });
+  const hm = surf({ map: texHesco, color: col(0xffffff) });
   const hesco = (x0, z0, x1, z1) => {
     const L = Math.hypot(x1 - x0, z1 - z0), n = Math.round(L / 1.2), horiz = Math.abs(z1 - z0) < .1;
     for (let k = 0; k < n; k++) { const t = (k + .5) / n; inst('hesco', GB, hm, mtx(lerp(x0, x1, t), .8, lerp(z0, z1, t), 1.14, 1.6, 1.14)); }
@@ -251,7 +256,7 @@ function buildBase() {
     addCol(x, z, 2.6, 2.6, 9);
   }
   // helipad with parked Black Hawk
-  const pad = new THREE.Mesh(new THREE.CircleGeometry(9, 32), new THREE.MeshLambertMaterial({ color: col(0x77726a), polygonOffset: true, polygonOffsetFactor: -1 }));
+  const pad = new THREE.Mesh(new THREE.CircleGeometry(9, 32), surf({ color: col(0x77726a), polygonOffset: true, polygonOffsetFactor: -1 }));
   pad.rotation.x = -PI / 2; pad.position.set(-34, .04, 126); pad.receiveShadow = true; scene.add(pad);
   inst('padH', GB, lam(0xf2efe6), mtx(-34, .06, 126, .7, .02, 6), false); inst('padH', GB, lam(0xf2efe6), mtx(-32.2, .06, 126, .7, .02, 6), false); inst('padH', GB, lam(0xf2efe6), mtx(-33.1, .06, 126, 1.8, .02, .7), false);
   parkedHeli = shadows(bBlackHawk(), true, false); parkedHeli.position.set(-33.1, 1.6, 126); parkedHeli.rotation.y = PI * .92; scene.add(parkedHeli);
@@ -273,7 +278,7 @@ function buildBase() {
     for (const o of [0, PI]) { g.beginPath(); for (let k = 0; k < 3; k++) { const a = o - PI / 2 + k * TAU / 3; const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; k ? g.lineTo(x, y) : g.moveTo(x, y); } g.closePath(); g.stroke(); }
   }, true, false);
   const fg = new THREE.PlaneGeometry(3.6, 2.6, 14, 6); fg.translate(1.8, 0, 0);
-  flag = new THREE.Mesh(fg, new THREE.MeshLambertMaterial({ map: ft, side: THREE.DoubleSide })); flag.position.set(.08, 9.6, 146); flag.castShadow = true; scene.add(flag);
+  flag = new THREE.Mesh(fg, surf({ map: ft, side: THREE.DoubleSide })); flag.position.set(.08, 9.6, 146); flag.castShadow = true; scene.add(flag);
   flagBase = Float32Array.from(fg.attributes.position.array);
 }
 function buildProps() {

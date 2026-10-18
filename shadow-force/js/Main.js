@@ -162,6 +162,9 @@ function frame(now) {
 
 /* ---------- boot ---------- */
 function boot() {
+  loadModels().then(boot2);
+}
+function boot2() {
   try {
     buildWorld();
     buildViewmodels();

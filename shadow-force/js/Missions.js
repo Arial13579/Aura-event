@@ -6,14 +6,18 @@
    ===================================================================== */
 const pickups = [];
 class Hostage extends Soldier {
-  constructor(x, z) { super('ally', 'hostage', x, z); this.follow = false; this.m.hip.position.y = this.m.tor.position.y = .5; this.m.legL.rotation.x = this.m.legR.rotation.x = 1.5; }
+  constructor(x, z) {
+    super('ally', 'hostage', x, z); this.follow = false; this.crouch = true;
+    if (!this.m.rig) { this.m.hip.position.y = this.m.tor.position.y = .5; this.m.legL.rotation.x = this.m.legR.rotation.x = 1.5; }
+  }
   decide() {
-    if (!this.follow) { this.goal.copy(this.pos); return; }
-    this.m.hip.position.y = this.m.tor.position.y = .95;
+    if (!this.follow) { this.goal.copy(this.pos); this.crouch = true; return; }
+    this.crouch = false;
+    if (!this.m.rig) this.m.hip.position.y = this.m.tor.position.y = .95;
     const yaw = P.yaw; this.goal.set(P.pos.x + Math.sin(yaw) * 2.5, 0, P.pos.z + Math.cos(yaw) * 2.5);
     this.stopDist = 1.5; this.running = dxz(this.pos, P.pos) > 8;
   }
-  anim(dt, sp) { if (this.follow) super.anim(dt, sp); }
+  anim(dt, sp) { if (this.follow || this.m.rig) super.anim(dt, sp); }
 }
 function centroidEnemies() {
   let x = 0, z = 0, n = 0;

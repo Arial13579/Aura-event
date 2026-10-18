@@ -48,14 +48,14 @@ const maxAniso = renderer.capabilities.getMaxAnisotropy();
 
 const scene = new THREE.Scene();
 const FOG_COLOR = hcol(0xdcc8a2, 1.0);
-scene.fog = new THREE.FogExp2(FOG_COLOR.clone(), .0027);
+scene.fog = new THREE.FogExp2(FOG_COLOR.clone(), .0022);
 const camera = new THREE.PerspectiveCamera(78, 1, .08, 1700);
 camera.rotation.order = 'YXZ';
 const wScene = new THREE.Scene();               // first-person weapon (rendered over the world)
 const wCam = new THREE.PerspectiveCamera(66, 1, .01, 20);
 
 /* ---------- lighting ---------- */
-const hemi = new THREE.HemisphereLight(col(0xcfe0f5), col(0xa08a64), .78);
+const hemi = new THREE.HemisphereLight(col(0xcfe0f5), col(0xa08a64), settings.quality !== 'low' ? .32 : .78);
 scene.add(hemi);
 const sun = new THREE.DirectionalLight(col(0xfff0d4), 2.05);
 sun.castShadow = true;
@@ -84,6 +84,20 @@ function updateLights(dt) {
   muzzleLight.intensity = Math.max(0, muzzleLight.intensity - dt * 90);
 }
 
+/* ---------- image-based lighting (environment probe rendered from the sky) ---------- */
+function buildEnvironment(sky) {
+  if (!PBR) return;
+  try {
+    const es = new THREE.Scene(); const s = sky.clone(); s.position.set(0, 0, 0); es.add(s);
+    const gnd = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), new THREE.MeshBasicMaterial({ color: col(0x9c865f) })); gnd.rotation.x = -PI / 2; gnd.position.y = -20; es.add(gnd);
+    const crt = new THREE.WebGLCubeRenderTarget(128, { type: isGL2 ? THREE.HalfFloatType : THREE.UnsignedByteType });
+    const cc = new THREE.CubeCamera(1, 5000, crt);
+    const ac = renderer.autoClear; renderer.autoClear = true; cc.update(renderer, es); renderer.autoClear = ac;
+    const pm = new THREE.PMREMGenerator(renderer); const env = pm.fromCubemap(crt.texture).texture;
+    scene.environment = env; wScene.environment = env; pm.dispose(); crt.dispose();
+  } catch (e) { console.warn('environment probe', e); }
+}
+
 /* ---------- HDR post-processing ---------- */
 const FSV = 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}';
 const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -99,11 +113,11 @@ const blurMat = new THREE.ShaderMaterial({
 const postMat = new THREE.ShaderMaterial({
   uniforms: {
     tDiffuse: { value: null }, tBloom: { value: null }, res: { value: new THREE.Vector2(1, 1) }, time: { value: 0 },
-    ads: { value: 0 }, scope: { value: 0 }, dmg: { value: 0 }, flash: { value: 0 }, exposure: { value: .95 }, bloomOn: { value: 1 }, down: { value: 0 }
+    ads: { value: 0 }, scope: { value: 0 }, dmg: { value: 0 }, flash: { value: 0 }, exposure: { value: .82 }, bloomOn: { value: 1 }, down: { value: 0 }, sunUV: { value: new THREE.Vector2(.5, .5) }, sunOn: { value: 0 }
   },
   vertexShader: FSV, depthTest: false, depthWrite: false,
   fragmentShader: `
-uniform sampler2D tDiffuse,tBloom;uniform vec2 res;uniform float time,ads,scope,dmg,flash,exposure,bloomOn,down;
+uniform sampler2D tDiffuse,tBloom;uniform vec2 res,sunUV;uniform float time,ads,scope,dmg,flash,exposure,bloomOn,down,sunOn;
 varying vec2 vUv;
 vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
 float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
@@ -120,7 +134,12 @@ void main(){
   }
   vec2 cd=(uv-.5)*(.0012+dmg*.01)*r;
   col.r=mix(col.r,texture2D(tDiffuse,uv+cd).r,.7); col.b=mix(col.b,texture2D(tDiffuse,uv-cd).b,.7);
-  if(bloomOn>.5) col+=texture2D(tBloom,uv).rgb*.6;
+  if(bloomOn>.5){
+    col+=texture2D(tBloom,uv).rgb*.6;
+    if(sunOn>.01){ vec2 dl=(sunUV-uv)/28.; vec2 sp=uv; float w=1.; vec3 rays=vec3(0.);
+      for(int i=0;i<28;i++){ sp+=dl; rays+=texture2D(tBloom,clamp(sp,0.,1.)).rgb*w; w*=.94; }
+      col+=rays*.045*sunOn; }
+  }
   col*=exposure;
   col=aces(col);
   col=pow(col,vec3(1./2.2));
@@ -188,6 +207,9 @@ function renderFrame(showWeapon) {
     }
   }
   const u = postMat.uniforms;
+  _tv.copy(camera.position).addScaledVector(SUN_DIR, 900).project(camera);
+  const sv = _tv.z < 1 && Math.abs(_tv.x) < 1.6 && Math.abs(_tv.y) < 1.6;
+  u.sunUV.value.set(_tv.x * .5 + .5, _tv.y * .5 + .5); u.sunOn.value = sv ? clamp(1.6 - Math.max(Math.abs(_tv.x), Math.abs(_tv.y)), 0, 1) : 0;
   u.tDiffuse.value = rtMain.texture; u.tBloom.value = rtA.texture; u.bloomOn.value = bloom ? 1 : 0; u.time.value = G.time;
   pass(postMat, null);
 }
@@ -256,7 +278,9 @@ const texHole = ctex(32, (g, s) => {
 /* ---------- geometry / material helpers ---------- */
 const GB = new THREE.BoxGeometry(1, 1, 1);
 const _lam = {}, _std = {}, _geo = {};
-function lam(h) { return _lam[h] || (_lam[h] = new THREE.MeshLambertMaterial({ color: col(h) })); }
+const PBR = settings.quality !== 'low';
+function surf(o) { return PBR ? new THREE.MeshStandardMaterial(Object.assign({ roughness: .9, metalness: 0 }, o)) : new THREE.MeshLambertMaterial(o); }
+function lam(h) { return _lam[h] || (_lam[h] = surf({ color: col(h) })); }
 function std(h, r = .6, m = .2) { const k = h + '_' + r + '_' + m; return _std[k] || (_std[k] = new THREE.MeshStandardMaterial({ color: col(h), roughness: r, metalness: m })); }
 function cylG(rt, rb, h, s = 12) { const k = 'c' + [rt, rb, h, s].join(); return _geo[k] || (_geo[k] = new THREE.CylinderGeometry(rt, rb, h, s)); }
 function sphG(r, s = 12) { const k = 's' + r + '_' + s; return _geo[k] || (_geo[k] = new THREE.SphereGeometry(r, s, Math.max(6, s * .75 | 0))); }
@@ -494,7 +518,7 @@ const tracers = new Tracers(90);
 class Decals {
   constructor(n, tex, size, opacity) {
     this.list = []; this.i = 0;
-    const mat = new THREE.MeshLambertMaterial({ map: tex, transparent: true, depthWrite: false, opacity, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
+    const mat = surf({ map: tex, transparent: true, depthWrite: false, opacity, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
     const geo = new THREE.PlaneGeometry(1, 1);
     for (let k = 0; k < n; k++) { const m = new THREE.Mesh(geo, mat); m.visible = false; m.renderOrder = 1; scene.add(m); this.list.push(m); }
     this.size = size;

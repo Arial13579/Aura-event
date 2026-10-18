@@ -11,9 +11,11 @@ const vBlk = std(0x1c1d1b, .42, .6), vDrk = std(0x2b2c29, .65, .35), vOd = std(0
   vFde = std(0xa58f68, .75, .1), vBak = std(0x7a4422, .55, .05), vBrass = std(0xb08d3a, .35, .85), vGlass = std(0x101418, .1, .6);
 function limb(g, a, b, t, mat) { const m = new THREE.Mesh(GB, mat); m.scale.set(t, t, a.distanceTo(b)); m.position.copy(a).add(b).multiplyScalar(.5); g.add(m); m.lookAt(b); return m; }
 function vmFinish(g, o) {
-  const sl = std(0x5c5e44, .95, 0), gl = std(0x2a2924, .85, 0);
-  limb(g, o.rg, new V3(.14, -.36, .44), .085, sl); box(g, .075, .085, .1, gl, o.rg.x, o.rg.y, o.rg.z);
-  limb(g, o.lg, o.lgTo || new V3(-.26, -.34, .1), .08, sl); box(g, .08, .07, .11, gl, o.lg.x, o.lg.y, o.lg.z);
+  if (!Models.ready) {
+    const sl = std(0x5c5e44, .95, 0), gl = std(0x2a2924, .85, 0);
+    limb(g, o.rg, new V3(.14, -.36, .44), .085, sl); box(g, .075, .085, .1, gl, o.rg.x, o.rg.y, o.rg.z);
+    limb(g, o.lg, o.lgTo || new V3(-.26, -.34, .1), .08, sl); box(g, .08, .07, .11, gl, o.lg.x, o.lg.y, o.lg.z);
+  }
   const fl = new THREE.Sprite(new THREE.SpriteMaterial({ map: texFlash, color: new THREE.Color(3, 2.2, 1.3), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
   fl.position.copy(o.muzzle); fl.scale.setScalar(o.flash || .3); fl.visible = false; g.add(fl);
   o.fl = fl; o.g = g;
@@ -25,33 +27,6 @@ function tube(g, r, h, x, y, z) { const m = new THREE.Mesh(new THREE.CylinderGeo
 function holo(g, y, z) { box(g, .045, .014, .075, vBlk, 0, y - .028, z); box(g, .006, .05, .05, vBlk, .025, y, z); box(g, .006, .05, .05, vBlk, -.025, y, z); box(g, .056, .007, .055, vBlk, 0, y + .026, z); redDot(g, y, z - .03); }
 function redDot(g, y, z) { const d = new THREE.Mesh(sphG(.0026, 6), new THREE.MeshBasicMaterial({ color: new THREE.Color(8, .3, .2) })); d.position.set(0, y, z); g.add(d); }
 const PI2 = PI / 2;
-function vM4() {
-  const g = new THREE.Group();
-  box(g, .056, .08, .34, vBlk, 0, 0, -.05); box(g, .066, .072, .3, vDrk, 0, .004, -.37); box(g, .02, .012, .62, vBlk, 0, .046, -.2);
-  cyl(g, .011, .011, .22, vBlk, 0, .005, -.62, PI2, 0, 0, 8); cyl(g, .017, .017, .07, vBlk, 0, .005, -.75, PI2, 0, 0, 8);
-  box(g, .046, .075, .2, vDrk, 0, -.012, .22); cyl(g, .014, .014, .14, vBlk, 0, 0, .08, PI2, 0, 0, 8);
-  box(g, .036, .095, .045, vDrk, 0, -.075, .055, -.35); box(g, .042, .14, .07, vBlk, 0, -.105, -.13, .18);
-  tube(g, .019, .07, 0, .087, -.1); box(g, .03, .035, .05, vBlk, 0, .055, -.1); redDot(g, .087, -.14);
-  return vmFinish(g, { muzzle: new V3(0, .005, -.8), sightY: .087, adsZ: .2, hip: new V3(.15, -.16, -.32), rg: new V3(0, -.1, .07), lg: new V3(0, -.035, -.4) });
-}
-function vAK() {
-  const g = new THREE.Group();
-  box(g, .055, .085, .36, vBlk, 0, 0, -.05); box(g, .05, .02, .3, vDrk, 0, .05, -.04);
-  box(g, .066, .07, .24, vWood, 0, -.004, -.36); box(g, .05, .04, .2, vWood, 0, .05, -.36);
-  cyl(g, .011, .011, .3, vBlk, 0, .01, -.62, PI2, 0, 0, 8); cyl(g, .016, .016, .05, vBlk, 0, .01, -.79, PI2, 0, 0, 8);
-  box(g, .012, .06, .012, vBlk, 0, .05, -.72); box(g, .03, .02, .04, vBlk, 0, .06, -.15);
-  box(g, .045, .085, .27, vWood, 0, -.035, .24, .1); box(g, .035, .09, .045, vWood, 0, -.075, .05, -.35);
-  box(g, .042, .17, .075, vBak, 0, -.14, -.14, .38);
-  return vmFinish(g, { muzzle: new V3(0, .01, -.83), sightY: .072, adsZ: .26, hip: new V3(.15, -.16, -.32), rg: new V3(0, -.1, .07), lg: new V3(0, -.04, -.38) });
-}
-function vSCAR() {
-  const g = new THREE.Group();
-  box(g, .06, .1, .44, vFde, 0, 0, -.08); box(g, .05, .06, .2, vBlk, 0, -.06, -.04); box(g, .02, .012, .5, vBlk, 0, .055, -.1);
-  cyl(g, .013, .013, .22, vBlk, 0, .005, -.62, PI2, 0, 0, 8); cyl(g, .019, .019, .07, vBlk, 0, .005, -.75, PI2, 0, 0, 8);
-  box(g, .05, .09, .25, vFde, 0, 0, .24); box(g, .045, .13, .075, vBlk, 0, -.11, -.12, .1); box(g, .036, .095, .045, vBlk, 0, -.08, .06, -.35);
-  holo(g, .088, -.1);
-  return vmFinish(g, { muzzle: new V3(0, .005, -.8), sightY: .088, adsZ: .18, hip: new V3(.15, -.16, -.32), rg: new V3(0, -.11, .08), lg: new V3(0, -.04, -.4) });
-}
 function vM249() {
   const g = new THREE.Group();
   box(g, .08, .11, .4, vBlk, 0, 0, -.05); box(g, .07, .05, .25, vBlk, 0, .03, -.38); cyl(g, .015, .015, .45, vBlk, 0, .01, -.62, PI2, 0, 0, 8);
@@ -112,6 +87,64 @@ function vSMAW() {
   o.war = []; return o;
 }
 
+
+/* side-profile extrusions with bevelled edges: pts are [forward, up] pairs in metres */
+function profile(g, pts, depth, mat, x = 0, bevel = .004) {
+  const sh = new THREE.Shape(); pts.forEach(([f, y], i) => i ? sh.lineTo(f, y) : sh.moveTo(f, y));
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: depth - bevel * 2, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel * .8, bevelSegments: 2, curveSegments: 4 });
+  geo.translate(0, 0, -(depth - bevel * 2) / 2); geo.rotateY(PI / 2); geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, mat); m.position.x = x; g.add(m); return m;
+}
+function rail(g, f0, f1, y, mat) {
+  box(g, .022, .009, f1 - f0, mat, 0, y, -(f0 + f1) / 2);
+  const n = Math.floor((f1 - f0) / .016), im = new THREE.InstancedMesh(GB, mat, n), m4 = new THREE.Matrix4();
+  for (let i = 0; i < n; i++) { m4.makeScale(.026, .007, .007).setPosition(0, y + .006, -(f0 + i * .016 + .008)); im.setMatrixAt(i, m4); }
+  im.frustumCulled = false; g.add(im);
+}
+const mRec = std(0x2c2d2f, .36, .75), mPoly = std(0x222222, .78, .1), mDark = std(0x0b0b0b, .9, 0), mFde = std(0xa88f66, .62, .12), mWood = std(0x5a371c, .55, .05), mSteel = std(0x3a3b3d, .3, .85);
+function vM4() {
+  const g = new THREE.Group();
+  profile(g, [[-.13, 0], [.22, 0], [.22, .05], [.19, .066], [-.13, .066]], .052, mRec);
+  profile(g, [[-.12, -.004], [.13, -.004], [.13, -.1], [.05, -.1], [.04, -.06], [-.02, -.055], [-.12, -.04]], .05, mRec);
+  profile(g, [[-.03, -.05], [-.075, -.05], [-.105, -.17], [-.058, -.175]], .036, mPoly);
+  box(g, .012, .008, .07, mRec, 0, -.08, -.0);
+  profile(g, [[.056, -.1], [.124, -.1], [.15, -.24], [.082, -.25]], .044, mRec, 0, .003);
+  profile(g, [[-.16, .045], [-.43, .05], [-.445, -.095], [-.395, -.1], [-.25, -.03], [-.16, -.02]], .045, mPoly);
+  cyl(g, .016, .016, .18, mRec, 0, .025, .21, PI2, 0, 0, 10);
+  cyl(g, .035, .035, .32, mPoly, 0, .03, -.38, PI2, 0, 0, 8);
+  rail(g, -.12, .5, .07, mRec);
+  cyl(g, .011, .011, .2, mSteel, 0, .03, -.63, PI2, 0, 0, 10); cyl(g, .017, .017, .065, mDark, 0, .03, -.76, PI2, 0, 0, 8);
+  box(g, .003, .018, .05, mDark, .027, .035, -.04); cyl(g, .008, .008, .02, mRec, .03, .04, .05, 0, 0, PI2, 8); box(g, .04, .008, .02, mRec, 0, .066, .12);
+  tube(g, .019, .07, 0, .1, -.1); box(g, .03, .03, .05, mRec, 0, .082, -.1); redDot(g, .1, -.14);
+  return vmFinish(g, { muzzle: new V3(0, .03, -.8), sightY: .1, adsZ: .2, hip: new V3(.15, -.17, -.32), rg: new V3(0, -.1, .07), lg: new V3(0, -.0, -.4) });
+}
+function vAK() {
+  const g = new THREE.Group();
+  profile(g, [[-.14, -.045], [.24, -.045], [.24, .045], [.2, .052], [-.12, .052], [-.14, .03]], .052, mSteel);
+  profile(g, [[.24, -.035], [.5, -.03], [.5, .025], [.24, .03]], .062, mWood);
+  profile(g, [[.24, .035], [.46, .035], [.46, .065], [.24, .065]], .045, mWood);
+  profile(g, [[-.03, -.045], [-.075, -.045], [-.1, -.165], [-.055, -.17]], .034, mWood);
+  profile(g, [[.06, -.045], [.135, -.045], [.2, -.2], [.17, -.26], [.11, -.24], [.13, -.2]], .042, std(0x7a3e1c, .5, .05), 0, .003);
+  profile(g, [[-.14, .03], [-.42, .0], [-.43, -.12], [-.38, -.12], [-.14, -.045]], .046, mWood);
+  cyl(g, .011, .011, .3, mSteel, 0, .01, -.66, PI2, 0, 0, 10); cyl(g, .016, .016, .05, mDark, 0, .01, -.83, PI2, 0, 0, 8);
+  box(g, .008, .05, .008, mSteel, 0, .045, -.76); box(g, .03, .01, .04, mSteel, 0, .057, -.15); box(g, .009, .014, .02, mSteel, .011, .066, -.15); box(g, .009, .014, .02, mSteel, -.011, .066, -.15); box(g, .04, .006, .2, mSteel, 0, .055, .02);
+  box(g, .006, .012, .07, mSteel, .03, .02, -.02);
+  return vmFinish(g, { muzzle: new V3(0, .01, -.86), sightY: .07, adsZ: .3, hip: new V3(.15, -.16, -.32), rg: new V3(0, -.1, .07), lg: new V3(0, -.04, -.38) });
+}
+function vSCAR() {
+  const g = new THREE.Group();
+  profile(g, [[-.14, 0], [.36, 0], [.36, .05], [.32, .07], [-.14, .07]], .06, mFde);
+  profile(g, [[-.12, -.004], [.14, -.004], [.14, -.09], [.06, -.09], [.04, -.06], [-.12, -.045]], .052, mPoly);
+  profile(g, [[-.03, -.05], [-.075, -.05], [-.105, -.17], [-.058, -.175]], .038, mPoly);
+  profile(g, [[.065, -.09], [.13, -.09], [.14, -.2], [.075, -.205]], .046, mPoly, 0, .003);
+  profile(g, [[-.14, .06], [-.42, .055], [-.43, -.1], [-.38, -.1], [-.3, -.02], [-.14, -.01]], .05, mFde);
+  rail(g, -.12, .36, .075, mPoly);
+  cyl(g, .013, .013, .25, mSteel, 0, .03, -.6, PI2, 0, 0, 10); cyl(g, .019, .019, .07, mDark, 0, .03, -.75, PI2, 0, 0, 8);
+  box(g, .003, .02, .06, mDark, .031, .04, -.03);
+  holo(g, .108, -.1);
+  return vmFinish(g, { muzzle: new V3(0, .03, -.8), sightY: .108, adsZ: .18, hip: new V3(.15, -.17, -.32), rg: new V3(0, -.11, .08), lg: new V3(0, -.0, -.4) });
+}
+
 /* ---------- arsenal ---------- */
 const WDEF = {
   m4: { name: 'M4A1', cls: 'רובה סער', dmg: 32, rpm: 800, mag: 30, res: 240, auto: true, spread: .026, ads: .0035, recoil: .011, reload: 2.1, vel: 880, fov: 54, snd: 'm4', head: 2.4, build: vM4 },
@@ -135,7 +168,8 @@ const WS = {
 };
 const VM = { root: new THREE.Group(), models: {} };
 wScene.add(VM.root);
-function buildViewmodels() { for (const id in WDEF) { const b = WDEF[id].build(); b.g.visible = false; VM.root.add(b.g); VM.models[id] = b; } }
+function buildViewmodels() {
+  FPArms.build(); for (const id in WDEF) { const b = WDEF[id].build(); b.g.visible = false; VM.root.add(b.g); VM.models[id] = b; } }
 function mkSlot(id) { const d = WDEF[id]; return { id, d, mag: d.mag, res: d.res, b: VM.models[id] }; }
 function equipLoadout() {
   WS.slots = [mkSlot(settings.primary), mkSlot('pistol'), mkSlot(settings.launcher)];
@@ -387,13 +421,20 @@ function updateWeapons(dt) {
   postMat.uniforms.scope.value = WS.scoped ? 1 : 0;
   postMat.uniforms.ads.value = d.scope ? 0 : WS.ads;
   VM.root.visible = !WS.scoped;
+  if (FPArms.root) FPArms.root.visible = !WS.scoped;
   b.fl.visible = WS.flashT > 0;
   for (const c of WS.c4s) c.led.visible = Math.sin(G.time * 12) > 0;
   poseViewmodel(dt, s);
+  if (FPArms.root && !WS.scoped) {
+    VM.root.updateMatrixWorld(true);
+    b.g.localToWorld(_fpR.copy(b.rg).add(FP_OFF_R)); b.g.localToWorld(_fpL.copy(b.lg).add(FP_OFF_L));
+    FPArms.update(_fpR, _fpL);
+  }
 }
+const _fpR = new V3(), _fpL = new V3(), FP_OFF_R = new V3(0, .0, .06), FP_OFF_L = new V3(-.02, -.045, .02);
 function poseViewmodel(dt, s) {
   const b = s.b, d = s.d, a = WS.ads;
-  let x = lerp(b.hip.x, 0, a), y = lerp(b.hip.y, -b.sightY, a), z = lerp(b.hip.z - .12, -b.adsZ, a);
+  let x = lerp(b.hip.x, 0, a), y = lerp(b.hip.y, -b.sightY, a), z = lerp(b.hip.z - .05, -b.adsZ, a);
   const mv = Math.min(1, P.speed / 5) * (P.onGround ? 1 : .3), bo = 1 - a * .9, sp = WS.sprintA;
   WS.bobT += dt * P.speed * 1.3;
   x += Math.sin(WS.bobT) * .014 * mv * bo * (1 + sp); y += -Math.abs(Math.cos(WS.bobT)) * .014 * mv * bo * (1 + sp * 1.3);

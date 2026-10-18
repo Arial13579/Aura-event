@@ -4,7 +4,7 @@
    bullet cracks, rotor wash, war-zone ambience, spatial panning with
    distance attenuation/low-pass, and radio voice callouts.
    ===================================================================== */
-let AC = null, master = null, NB = null, rotorG = null, battleG = null, sndBudget = 0, _dst = null, _t = 0;
+let revSend = null, AC = null, master = null, NB = null, rotorG = null, battleG = null, sndBudget = 0, _dst = null, _t = 0;
 const _ap = new V3(), _ar = new V3();
 
 function initAudio() {
@@ -14,6 +14,10 @@ function initAudio() {
   comp.threshold.value = -16; comp.knee.value = 12; comp.ratio.value = 5; comp.attack.value = .003; comp.release.value = .25;
   comp.connect(AC.destination);
   master = AC.createGain(); master.gain.value = settings.vol; master.connect(comp);
+  // generated impulse response: outdoor slap-back echo + long desert tail
+  const ir = AC.createBuffer(2, AC.sampleRate * 2.4, AC.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < d.length; i++) { const t = i / AC.sampleRate; d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t / 2.4, 3.2) * (t > .09 && t < .13 ? 2.2 : 1) * .6; } }
+  const conv = AC.createConvolver(); conv.buffer = ir; revSend = AC.createGain(); revSend.gain.value = .32; revSend.connect(conv); conv.connect(master);
   NB = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
   const d = NB.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   loopNoise(320, 'lowpass', .05, .7);                    // desert wind
@@ -48,6 +52,7 @@ function tn(dt, f0, f1, dur, g, type = 'sine') {
   const gn = AC.createGain(); gn.gain.setValueAtTime(g, t); gn.gain.exponentialRampToValueAtTime(.0008, t + dur);
   o.connect(gn); gn.connect(_dst); o.start(t); o.stop(t + dur + .05);
 }
+const REVERB = { m4: 1, ak: 1, scar: 1, lmg: 1, sniper: 1, rocket: 1, tank: 1, boom: 1, boomS: 1, far: 1, sonic: 1, jet: 1 };
 const SND = {
   m4() { nz(0, .12, 1500, .8, 1.1); nz(0, .05, 6500, .7, .55, 'highpass'); tn(0, 170, 45, .1, 1); nz(.012, .45, 520, .6, .22, 'lowpass'); },
   ak() { nz(0, .13, 1150, .8, 1.15); nz(0, .05, 5200, .7, .5, 'highpass'); tn(0, 150, 42, .11, 1); nz(.015, .5, 480, .6, .24, 'lowpass'); },
@@ -94,6 +99,7 @@ function sfx(name, vol = 1, pos = null, delay = 0) {
   }
   sndBudget++;
   const g = AC.createGain(); g.gain.value = vol; let last = g;
+  if (revSend && REVERB[name]) g.connect(revSend);
   if (dist > 25) { const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = Math.max(380, 9000 * 25 / dist); g.connect(lp); last = lp; }
   if (AC.createStereoPanner) { const p = AC.createStereoPanner(); p.pan.value = pan; last.connect(p); p.connect(master); } else last.connect(master);
   _dst = g; _t = AC.currentTime + delay;
