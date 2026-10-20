@@ -6,6 +6,7 @@ import { useAdminData } from '@/components/AdminShell';
 import { useAuth } from '@/components/AuthGate';
 import { AreaLine, Donut, Legend, StackedBars, type Slice, type StackRow } from '@/components/Charts';
 import { Countdown } from '@/components/Countdown';
+import { WhoList } from '@/components/WhoList';
 import { Initials, Spinner, StatusBadge } from '@/components/ui';
 import { IconPlus, IconSend } from '@/components/Icons';
 import { hebrewDate, longDate, relativeTime } from '@/lib/format';
@@ -110,7 +111,7 @@ export default function Dashboard() {
             {settings.venueName && ` · ${settings.venueName}`}
           </div>
         </div>
-        <Link href="/admin/send" className="btn btn-gold btn-sm"><IconSend width={16} height={16} /> שליחה</Link>
+        <Link href="/admin/send" className="btn btn-primary btn-sm"><IconSend width={16} height={16} /> שליחה</Link>
         <Link href="/admin/guests" className="btn btn-sm"><IconPlus width={16} height={16} /> מוזמן</Link>
       </div>
 
@@ -119,7 +120,7 @@ export default function Dashboard() {
         <div className="row wrap" style={{ alignItems: 'flex-end', gap: 18 }}>
           <div className="grow">
             <div className="kpi-label">צפי אורחים שאישרו</div>
-            <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.05, letterSpacing: -1 }} className="gold-text">{stats.adults + stats.kids}</div>
+            <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.05, letterSpacing: -1 }} className="accent-text">{stats.adults + stats.kids}</div>
             <div className="muted" style={{ fontSize: 13.5 }}>{stats.adults} מבוגרים · {stats.kids} ילדים · {stats.counts.yes} הזמנות</div>
           </div>
           <div style={{ textAlign: 'left' }}>
@@ -145,6 +146,8 @@ export default function Dashboard() {
         ))}
       </div>
 
+      <WhoList guests={guests!} />
+
       <div className="grid-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         <div className="card">
           <div className="card-title">התפלגות תשובות <span className="card-sub">{stats.total} הזמנות</span></div>
@@ -157,7 +160,7 @@ export default function Dashboard() {
         <div className="card stack" style={{ gap: 16 }}>
           <div className="card-title" style={{ marginBottom: 0 }}>משפך שליחה</div>
           {[
-            { l: 'נשלחה הזמנה', v: stats.sent, c: 'var(--gold)' },
+            { l: 'נשלחה הזמנה', v: stats.sent, c: 'var(--accent)' },
             { l: 'השיבו', v: stats.responded, c: 'var(--yes)' },
             { l: 'ממתינים לשליחה', v: stats.total - stats.sent, c: 'var(--pending)' },
           ].map((r) => (

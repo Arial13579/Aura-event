@@ -96,16 +96,16 @@ export function AreaLine({ points, height = 150 }: { points: { label: string; va
     <div>
       <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} preserveAspectRatio="none" role="img" aria-label="תשובות מצטברות">
         <defs>
-          <linearGradient id="goldArea" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#d9b45a" stopOpacity=".35" />
-            <stop offset="100%" stopColor="#d9b45a" stopOpacity="0" />
+          <linearGradient id="accentArea" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#0fb5ae" stopOpacity=".35" />
+            <stop offset="100%" stopColor="#0fb5ae" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[0.25, 0.5, 0.75, 1].map((g) => (
           <line key={g} x1="0" x2={w} y1={pad.t + (1 - g) * (h - pad.t - pad.b)} y2={pad.t + (1 - g) * (h - pad.t - pad.b)} stroke="var(--border)" strokeDasharray="3 5" vectorEffect="non-scaling-stroke" />
         ))}
-        {n > 0 && <path d={area} fill="url(#goldArea)" />}
-        {n > 0 && <path d={line} fill="none" stroke="#d9b45a" strokeWidth="2.5" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />}
+        {n > 0 && <path d={area} fill="url(#accentArea)" />}
+        {n > 0 && <path d={line} fill="none" stroke="#0fb5ae" strokeWidth="2.5" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />}
       </svg>
       {n > 1 && (
         <div className="row faint" style={{ justifyContent: 'space-between', fontSize: 12, marginTop: -16 }}>

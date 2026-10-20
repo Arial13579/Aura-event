@@ -19,7 +19,7 @@ function burstConfetti(canvas: HTMLCanvasElement) {
   canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
   ctx.scale(dpr, dpr);
-  const colors = ['#f3dc9a', '#d9b45a', '#a9843f', '#ffffff', '#2fbf71'];
+  const colors = ['#3fd6c9', '#0fb5ae', '#0a93a6', '#a5f3ec', '#ffd166', '#ff8fab'];
   const pieces = Array.from({ length: 140 }, () => ({
     x: window.innerWidth / 2, y: window.innerHeight * 0.45,
     vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 15 - 4,
@@ -87,8 +87,13 @@ export function RsvpClient({ guest, settings }: { guest: PublicGuest | null; set
         <header className="g-hero">
           {firstName && <div className="g-hello">שלום {firstName},</div>}
           <div className="g-headline">{settings.headline}</div>
-          <h1 className="g-names">{settings.coupleNames}</h1>
+          <h1 className="g-names">
+            {settings.coupleNames.split('&').map((part, i) => (
+              <span key={i}>{i > 0 && <span className="g-names-amp"> & </span>}{part.trim()}</span>
+            ))}
+          </h1>
           {settings.extraText && <p className="g-extra">{settings.extraText}</p>}
+          <div className="g-divider"><span className="g-heart">♥</span></div>
         </header>
 
         {!!settings.invitationVersion && (
@@ -97,7 +102,7 @@ export function RsvpClient({ guest, settings }: { guest: PublicGuest | null; set
           </button>
         )}
 
-        <section className="g-card g-details">
+        <section className="g-card g-details g-reveal">
           {date && (
             <>
               <div className="g-date">{longDate(date)}</div>
@@ -122,14 +127,14 @@ export function RsvpClient({ guest, settings }: { guest: PublicGuest | null; set
         </section>
 
         {settings.eventDate && (
-          <section className="g-card">
+          <section className="g-card g-reveal">
             <div className="g-section-title">נותרו עד החתונה</div>
             <Countdown iso={settings.eventDate} />
           </section>
         )}
 
         {guest ? (
-          <section className="g-card g-rsvp" id="rsvp">
+          <section className="g-card g-rsvp g-reveal" id="rsvp">
             {view === 'choose' && (
               <>
                 <div className="g-section-title">נשמח לדעת אם תגיעו</div>
@@ -176,7 +181,7 @@ export function RsvpClient({ guest, settings }: { guest: PublicGuest | null; set
           <section className="g-card center"><div className="g-done-body">הקישור לאישור ההגעה אינו תקין. פנו לבעלי השמחה לקבלת קישור אישי.</div></section>
         )}
 
-        <footer className="g-footer">AURA EVENT</footer>
+        <footer className="g-footer">מחכים לראותכם <span className="g-heart" style={{ color: 'var(--accent)' }}>♥</span></footer>
       </main>
 
       {zoom && (

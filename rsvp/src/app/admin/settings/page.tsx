@@ -95,7 +95,7 @@ export default function SettingsPage() {
           <img src={`/api/invitation?v=${settings.invitationVersion}`} alt="ההזמנה" style={{ borderRadius: 14, border: '1px solid var(--border)', maxHeight: 420, objectFit: 'contain', margin: '0 auto' }} />
         ) : (
           <button className="card center stack" style={{ alignItems: 'center', borderStyle: 'dashed', background: 'var(--bg-2)', padding: 30 }} onClick={() => fileRef.current?.click()}>
-            <IconImage width={34} height={34} style={{ color: 'var(--gold)' }} />
+            <IconImage width={34} height={34} style={{ color: 'var(--accent)' }} />
             <div style={{ fontWeight: 700 }}>העלאת תמונת הזמנה</div>
             <div className="muted" style={{ fontSize: 13 }}>JPG או PNG, התמונה תכווץ אוטומטית</div>
           </button>
@@ -138,7 +138,7 @@ export default function SettingsPage() {
       </div>
 
       <div style={{ position: 'sticky', bottom: 'calc(92px + var(--safe-b))', zIndex: 5 }}>
-        <button className="btn btn-gold btn-block" style={{ minHeight: 54 }} disabled={busy} onClick={save}>{busy ? 'שומר…' : 'שמירת הגדרות'}</button>
+        <button className="btn btn-primary btn-block" style={{ minHeight: 54 }} disabled={busy} onClick={save}>{busy ? 'שומר…' : 'שמירת הגדרות'}</button>
       </div>
     </div>
   );

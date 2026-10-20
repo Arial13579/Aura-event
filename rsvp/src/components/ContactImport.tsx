@@ -147,7 +147,7 @@ export function ContactImport({ open, onClose, existingPhones, tags }: { open: b
           {error && <div style={{ color: 'var(--no)', fontSize: 13 }}>{error}</div>}
           <div className="row">
             <button className="btn btn-ghost" onClick={reset}>חזרה</button>
-            <button className="btn btn-gold grow" disabled={busy || selected.size === 0} onClick={save}>
+            <button className="btn btn-primary grow" disabled={busy || selected.size === 0} onClick={save}>
               {busy ? 'מוסיף…' : `הוספת ${selected.size} מוזמנים`}
             </button>
           </div>

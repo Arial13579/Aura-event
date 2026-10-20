@@ -92,7 +92,7 @@ export function GuestEditor({ open, onClose, guest, tags }: { open: boolean; onC
         {error && <div style={{ color: 'var(--no)', fontSize: 13 }}>{error}</div>}
         <div className="row">
           {!guest && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => save(true)}>שמירה והוספת עוד</button>}
-          <button type="submit" className="btn btn-gold grow" disabled={busy}>{busy ? 'שומר…' : 'שמירה'}</button>
+          <button type="submit" className="btn btn-primary grow" disabled={busy}>{busy ? 'שומר…' : 'שמירה'}</button>
         </div>
       </form>
     </Sheet>

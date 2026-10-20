@@ -68,7 +68,7 @@ function GuestsInner() {
       </div>
 
       <div className="grid-2">
-        <button className="btn btn-gold" onClick={() => setImportOpen(true)}><IconContacts width={19} height={19} /> מאנשי הקשר</button>
+        <button className="btn btn-primary" onClick={() => setImportOpen(true)}><IconContacts width={19} height={19} /> מאנשי הקשר</button>
         <button className="btn" onClick={() => setEditor({ open: true, guest: null })}><IconPlus width={19} height={19} /> הוספה ידנית</button>
       </div>
 

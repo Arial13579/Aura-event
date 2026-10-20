@@ -82,7 +82,7 @@ export default function SendPage() {
             <div className="muted" style={{ fontSize: 13 }}>{Math.min(index, queue.length)} מתוך {queue.length} · נשלחו {sentIds.size}</div>
           </div>
         </div>
-        <div className="progress"><i style={{ width: `${(Math.min(index, queue.length) / queue.length) * 100}%`, background: 'var(--gold-grad)', borderRadius: 99, transition: 'width .3s ease' }} /></div>
+        <div className="progress"><i style={{ width: `${(Math.min(index, queue.length) / queue.length) * 100}%`, background: 'var(--accent-grad)', borderRadius: 99, transition: 'width .3s ease' }} /></div>
 
         {done ? (
           <div className="card stack center hero-stat" style={{ alignItems: 'center', padding: 32 }}>
@@ -91,7 +91,7 @@ export default function SendPage() {
             <div className="muted">נשלחו {sentIds.size} הזמנות. התשובות יופיעו בלוח הבקרה בזמן אמת.</div>
             <div className="row" style={{ marginTop: 8 }}>
               <button className="btn" onClick={() => { setQueue(null); setIndex(0); setGroup(null); setSentIds(new Set()); }}>סבב נוסף</button>
-              <Link href="/admin" className="btn btn-gold">ללוח הבקרה</Link>
+              <Link href="/admin" className="btn btn-primary">ללוח הבקרה</Link>
             </div>
           </div>
         ) : (
@@ -113,12 +113,12 @@ export default function SendPage() {
               </a>
             )}
             {channel === 'sms' && (
-              <a className="btn btn-gold btn-block" style={{ minHeight: 58, fontSize: 17 }} href={smsUrl(g.phone, text)} onClick={() => record(g.id)}>
+              <a className="btn btn-primary btn-block" style={{ minHeight: 58, fontSize: 17 }} href={smsUrl(g.phone, text)} onClick={() => record(g.id)}>
                 <IconSms /> שליחה ב־SMS
               </a>
             )}
             {channel === 'share' && (
-              <button className="btn btn-gold btn-block" style={{ minHeight: 58, fontSize: 17 }} onClick={async () => {
+              <button className="btn btn-primary btn-block" style={{ minHeight: 58, fontSize: 17 }} onClick={async () => {
                 const ok = await shareInvitation(text, settings.invitationVersion);
                 if (ok) record(g.id); else toast('השיתוף בוטל');
               }}>
@@ -145,7 +145,7 @@ export default function SendPage() {
       </div>
 
       {!settings.invitationVersion && viewer.isOwner && (
-        <Link href="/admin/settings" className="card row" style={{ borderColor: 'rgba(240,180,60,.4)', gap: 12 }}>
+        <Link href="/admin/settings" className="card row" style={{ borderColor: 'rgba(224,138,0,.4)', gap: 12 }}>
           <span style={{ fontSize: 22 }}>🖼️</span>
           <span className="grow" style={{ fontSize: 14 }}>עוד לא הועלתה תמונת הזמנה. מומלץ להעלות אותה כדי שתופיע בתצוגה המקדימה של הקישור.</span>
         </Link>
@@ -153,7 +153,7 @@ export default function SendPage() {
 
       <div className="grid-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))' }}>
         {GROUPS.map((gr) => (
-          <button key={gr.key} className="card" style={{ textAlign: 'right', padding: 14, borderColor: group === gr.key ? 'var(--gold-2)' : undefined, background: group === gr.key ? 'var(--gold-soft)' : undefined }} onClick={() => setGroup(gr.key)}>
+          <button key={gr.key} className="card" style={{ textAlign: 'right', padding: 14, borderColor: group === gr.key ? 'var(--accent-2)' : undefined, background: group === gr.key ? 'var(--accent-soft)' : undefined }} onClick={() => setGroup(gr.key)}>
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <span style={{ fontSize: 22 }}>{gr.emoji}</span>
               <b style={{ fontSize: 20, fontVariantNumeric: 'tabular-nums' }}>{groupCounts[gr.key]}</b>
@@ -229,7 +229,7 @@ export default function SendPage() {
             </div>
           </div>
 
-          <button className="btn btn-gold btn-block" style={{ minHeight: 56, fontSize: 17 }} disabled={chosen.length === 0 || !template.trim()} onClick={() => { setQueue(chosen); setIndex(0); setSentIds(new Set()); }}>
+          <button className="btn btn-primary btn-block" style={{ minHeight: 56, fontSize: 17 }} disabled={chosen.length === 0 || !template.trim()} onClick={() => { setQueue(chosen); setIndex(0); setSentIds(new Set()); }}>
             התחלת שליחה ל־{chosen.length} מוזמנים
           </button>
         </>

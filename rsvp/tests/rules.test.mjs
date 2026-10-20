@@ -8,7 +8,7 @@ import {
 } from 'firebase/firestore';
 
 setLogLevel('silent');
-const PROJECT = 'demo-aura';
+const PROJECT = 'demo-wedding';
 let n = 0;
 let failed = 0;
 

@@ -46,8 +46,8 @@ export function useFirebaseUser() {
 export function BrandHeader({ sub }: { sub?: string }) {
   return (
     <div className="stack center" style={{ alignItems: 'center', gap: 10 }}>
-      <div className="brand-mark" style={{ width: 64, height: 64, borderRadius: 20, fontSize: 32 }}>A</div>
-      <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: 1 }} className="gold-text">AURA EVENT</div>
+      <div className="brand-mark" style={{ width: 64, height: 64, borderRadius: 20, fontSize: 32 }}>💍</div>
+      <div style={{ fontSize: 26, fontWeight: 800 }} className="accent-text">החתונה שלנו</div>
       {sub && <div className="muted" style={{ fontSize: 15 }}>{sub}</div>}
     </div>
   );
@@ -71,7 +71,7 @@ export function LoginScreen({ title, sub, error }: { title?: string; sub?: strin
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(error || '');
   return (
-    <div className="fullscreen-center" style={{ background: 'radial-gradient(90% 60% at 50% 0%, rgba(217,180,90,.16), transparent 70%)' }}>
+    <div className="fullscreen-center soft-bg">
       <div className="stack" style={{ width: '100%', maxWidth: 400, gap: 26 }}>
         <BrandHeader sub={sub || 'מערכת אישורי הגעה'} />
         <div className="card stack" style={{ padding: 22 }}>
@@ -79,7 +79,7 @@ export function LoginScreen({ title, sub, error }: { title?: string; sub?: strin
           <p className="muted" style={{ fontSize: 14, lineHeight: 1.6 }}>הגישה מוגבלת לבעלי הרשאה בלבד. התחברו עם חשבון Google שלכם.</p>
           <button
             className="btn btn-block"
-            style={{ background: '#fff', color: '#1f1f1f', border: 0, minHeight: 52 }}
+            style={{ minHeight: 52 }}
             disabled={busy}
             onClick={async () => {
               setBusy(true);

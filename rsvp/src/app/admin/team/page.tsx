@@ -49,7 +49,7 @@ export default function TeamPage() {
       <div className="card stack hero-stat">
         <div className="card-title" style={{ marginBottom: 0 }}>קישור הרשאה חדש</div>
         <input className="input" placeholder="למי הקישור? (למשל: הכלה, אמא)" value={label} onChange={(e) => setLabel(e.target.value)} />
-        <button className="btn btn-gold" disabled={busy} onClick={create}><IconShare width={18} height={18} /> יצירה ושליחה</button>
+        <button className="btn btn-primary" disabled={busy} onClick={create}><IconShare width={18} height={18} /> יצירה ושליחה</button>
         <div className="hint">השותף רואה ומנהל רק את המוזמנים שהוא עצמו הוסיף. אתה רואה את כולם. אפשר לבטל גישה בכל רגע.</div>
       </div>
 

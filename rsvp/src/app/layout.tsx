@@ -5,10 +5,10 @@ import './globals.css';
 const heebo = Heebo({ subsets: ['hebrew', 'latin'], weight: ['300', '400', '500', '600', '700', '800'], variable: '--font-heebo', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'AURA · אישורי הגעה',
-  description: 'מערכת אישורי הגעה חכמה לאירועים',
+  title: 'אישורי הגעה · החתונה שלנו',
+  description: 'אישורי הגעה לחתונה',
   
-  appleWebApp: { capable: true, title: 'AURA RSVP', statusBarStyle: 'black-translucent' },
+  appleWebApp: { capable: true, title: 'החתונה שלנו', statusBarStyle: 'default' },
 };
 
 export const viewport: Viewport = {
@@ -16,7 +16,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: 'cover',
-  themeColor: '#09090a',
+  themeColor: '#f5f9f9',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

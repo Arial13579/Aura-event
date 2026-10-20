@@ -19,9 +19,9 @@ export async function GET() {
   const title = `החתונה של ${s?.coupleNames || ''}`.trim();
   const location = [s?.venueName, s?.venueAddress].filter(Boolean).join(', ');
   const ics = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AURA EVENT//RSVP//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Wedding RSVP//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    `UID:wedding-${stamp(start)}@aura-event`,
+    `UID:wedding-${stamp(start)}@wedding-rsvp`,
     `DTSTAMP:${stamp(new Date())}`,
     `DTSTART:${stamp(start)}`,
     `DTEND:${stamp(end)}`,

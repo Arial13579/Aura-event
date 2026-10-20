@@ -37,13 +37,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="shell">
           <header className="topbar">
             <div className="brand grow">
-              <div className="brand-mark">A</div>
+              <div className="brand-mark">💍</div>
               <div>
-                <div className="brand-name gold-text">AURA EVENT</div>
-                <div className="brand-sub">{settings?.coupleNames || 'אישורי הגעה'}</div>
+                <div className="brand-name accent-text">{settings?.coupleNames || 'החתונה שלנו'}</div>
+                <div className="brand-sub">אישורי הגעה</div>
               </div>
             </div>
-            <span className="badge" style={{ background: 'var(--gold-soft)', color: 'var(--gold)' }}>
+            <span className="badge" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
               {viewer.isOwner ? 'מנהל' : 'שותף'}
             </span>
             {user.photoURL

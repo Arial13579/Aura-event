@@ -1,4 +1,4 @@
-# AURA RSVP · מערכת אישורי הגעה
+# אישורי הגעה לחתונה שלנו
 
 מערכת אישורי הגעה לחתונה, מותאמת לאייפון (אפשר להוסיף למסך הבית כאפליקציה).
 
@@ -34,7 +34,7 @@
    NEXT_PUBLIC_OWNER_EMAIL=arielkahalani1@gmail.com
    ```
 4. Deploy.
-5. בחזרה ב־Firebase: **Authentication ← Settings ← Authorized domains**, מוסיפים את הדומיין של Vercel (למשל `aura-rsvp.vercel.app`).
+5. בחזרה ב־Firebase: **Authentication ← Settings ← Authorized domains**, מוסיפים את הדומיין של Vercel (למשל `our-wedding.vercel.app`).
 
 ### 3. באייפון
 - פותחים את האתר ב־Safari ← כפתור שיתוף ← **הוספה למסך הבית**.
@@ -46,8 +46,8 @@
 cd rsvp
 npm install
 cp .env.example .env.local   # ממלאים פרטים, או מול האמולטור:
-                             # NEXT_PUBLIC_USE_EMULATOR=1, NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-aura
-npx firebase-tools emulators:start --only auth,firestore --project demo-aura
+                             # NEXT_PUBLIC_USE_EMULATOR=1, NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-wedding
+npx firebase-tools emulators:start --only auth,firestore --project demo-wedding
 npm run dev
 npm run test:rules           # בדיקות אבטחה מול האמולטור
 ```
