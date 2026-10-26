@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>משרה 1110856</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #0f3d3e; --bg2: #145a5b; --cream: #fff7ec; --coral: #ff7a59;
+    --amber: #ffc857; --mint: #9be3c9; --ink: #0b2a2b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+  body {
+    font-family: 'Heebo', sans-serif; color: var(--cream);
+    background: linear-gradient(160deg, var(--bg2) 0%, var(--bg1) 60%, #0a2c2d 100%);
+    position: relative;
+  }
+  .emoji { font-family: 'Noto Color Emoji', sans-serif; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; }
+  #b1 { width: 700px; height: 700px; background: var(--coral); top: -200px; right: -250px; opacity: .35; }
+  #b2 { width: 800px; height: 800px; background: var(--mint); bottom: -300px; left: -300px; opacity: .25; }
+  #b3 { width: 500px; height: 500px; background: var(--amber); top: 800px; left: 600px; opacity: .2; }
+
+  #progress { position: absolute; top: 70px; right: 90px; left: 90px; height: 10px;
+    background: rgba(255,255,255,.15); border-radius: 10px; overflow: hidden; }
+  #progress i { display: block; height: 100%; width: 0; background: var(--amber); border-radius: 10px; margin-right: 0; }
+  #tag { position: absolute; top: 120px; right: 90px; font-size: 38px; font-weight: 700;
+    background: rgba(255,255,255,.12); padding: 10px 28px; border-radius: 40px; letter-spacing: 1px; }
+  #place { position: absolute; top: 120px; left: 90px; font-size: 38px; font-weight: 700;
+    background: var(--coral); color: #fff; padding: 10px 28px; border-radius: 40px; }
+
+  .scene { position: absolute; inset: 0; padding: 300px 90px 420px 130px;
+    display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+  .a { will-change: transform, opacity; }
+  .kicker { font-size: 48px; font-weight: 700; color: var(--mint); }
+  .huge { font-size: 132px; font-weight: 900; line-height: 1.02; }
+  .big { font-size: 96px; font-weight: 900; line-height: 1.05; }
+  .mid { font-size: 60px; font-weight: 700; line-height: 1.2; }
+  .hl { color: var(--amber); }
+  .co { color: var(--coral); }
+  .pill { display: inline-block; align-self: flex-start; background: var(--amber); color: var(--ink);
+    font-weight: 800; font-size: 56px; padding: 14px 40px; border-radius: 60px; }
+  .card { background: rgba(255,255,255,.10); border: 2px solid rgba(255,255,255,.18);
+    border-radius: 36px; padding: 30px 38px; display: flex; align-items: center; gap: 30px;
+    font-size: 52px; font-weight: 700; line-height: 1.2; }
+  .card .emoji { font-size: 64px; flex: none; }
+  .card small { display: block; font-size: 36px; font-weight: 500; opacity: .8; }
+  .must { font-size: 30px; background: var(--coral); color: #fff; padding: 4px 16px;
+    border-radius: 20px; margin-right: 12px; vertical-align: middle; font-weight: 800; }
+  .clock { display: flex; gap: 24px; justify-content: flex-start; direction: ltr; align-self: center; }
+  .clock div { background: var(--cream); color: var(--ink); font-size: 118px; font-weight: 900;
+    padding: 10px 30px; border-radius: 32px; }
+  .clock span { font-size: 120px; font-weight: 900; align-self: center; }
+  .days { display: flex; gap: 18px; }
+  .days b { width: 130px; height: 130px; border-radius: 50%; background: var(--mint); color: var(--ink);
+    font-size: 64px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+  .mail { background: var(--cream); color: var(--ink); border-radius: 36px; padding: 34px 30px;
+    font-size: 54px; font-weight: 800; direction: ltr; text-align: center; letter-spacing: .5px; }
+  .jobno { font-size: 64px; font-weight: 800; text-align: center; }
+  .jobno b { background: var(--amber); color: var(--ink); padding: 6px 26px; border-radius: 24px; }
+  .center { text-align: center; align-items: center; }
+  .note { font-size: 34px; opacity: .75; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div><div class="blob" id="b3"></div>
+  <div id="progress"><i></i></div>
+  <div id="tag">משרה #1110856</div>
+  <div id="place">📍 רמלה</div>
+
+  <!-- 1: hook -->
+  <section class="scene" data-start="0" data-end="3.6">
+    <div class="a kicker" data-d=".1">רגע, לפני שגוללים 👇</div>
+    <div class="a huge" data-d=".3">מחפשים עבודה<br>עם <span class="hl">משמעות</span>?</div>
+    <div class="a pill" data-d="1.1"><span class="emoji">🚗</span> רכב צמוד + תנאים מעולים</div>
+  </section>
+
+  <!-- 2: role -->
+  <section class="scene" data-start="3.6" data-end="7.2">
+    <div class="a kicker" data-d=".1">לחברה מובילה בתחום הגיל השלישי</div>
+    <div class="a big" data-d=".3">דרוש/ה<br>עובד/ת <span class="hl">מקצועי/ת</span></div>
+    <div class="a mid" data-d=".8"><span class="co">50% משרה</span> ברמלה</div>
+    <div class="a mid" data-d="1.2">תפקיד אנושי ומספק <span class="emoji">💛</span></div>
+  </section>
+
+  <!-- 3: hours -->
+  <section class="scene" data-start="7.2" data-end="10.6">
+    <div class="a kicker" data-d=".1">שעות נוחות, בוקר בלבד</div>
+    <div class="a days" data-d=".3"><b>א</b><b>ב</b><b>ג</b><b>ד</b><b>ה</b></div>
+    <div class="a clock" data-d=".7"><div>08:00</div><span>–</span><div>12:00</div></div>
+    <div class="a mid" data-d="1.2">ואחר הצהריים? <span class="hl">כולו שלך</span> <span class="emoji">☀️</span></div>
+  </section>
+
+  <!-- 4: what you do -->
+  <section class="scene" data-start="10.6" data-end="15.4">
+    <div class="a big" data-d=".1">מה <span class="hl">עושים</span>?</div>
+    <div class="a card" data-d=".4"><span class="emoji">🏡</span>ביקורי בית אצל אזרחים ותיקים</div>
+    <div class="a card" data-d=".8"><span class="emoji">🤝</span>ליווי אישי ומקצועי</div>
+    <div class="a card" data-d="1.2"><span class="emoji">💬</span>ייעוץ, הכוונה ומיצוי זכויות</div>
+    <div class="a card" data-d="1.6"><span class="emoji">👨‍👩‍👧</span>קשר עם בני המשפחה</div>
+  </section>
+
+  <!-- 5: perks -->
+  <section class="scene" data-start="15.4" data-end="20.2">
+    <div class="a big" data-d=".1">למה <span class="co">אצלנו</span>?</div>
+    <div class="a card" data-d=".4"><span class="emoji">✨</span>אין צורך בניסיון קודם!</div>
+    <div class="a card" data-d=".8"><span class="emoji">🎓</span><span>הכשרה וליווי<small>על חשבון החברה</small></span></div>
+    <div class="a card" data-d="1.2"><span class="emoji">🏠</span>אווירה משפחתית וצוות תומך</div>
+    <div class="a card" data-d="1.6"><span class="emoji">🌱</span>עבודה עצמאית, מגוונת ועם שליחות</div>
+  </section>
+
+  <!-- 6: requirements -->
+  <section class="scene" data-start="20.2" data-end="25">
+    <div class="a big" data-d=".1">מה <span class="hl">צריך</span>?</div>
+    <div class="a card" data-d=".4"><span class="emoji">🎓</span><span>תואר בעבודה סוציאלית או סיעוד<span class="must">חובה</span></span></div>
+    <div class="a card" data-d=".8"><span class="emoji">🪪</span><span>רישיון נהיגה<span class="must">חובה</span></span></div>
+    <div class="a card" data-d="1.2"><span class="emoji">💻</span>שליטה ביישומי מחשב</div>
+    <div class="a card" data-d="1.6"><span class="emoji">🕗</span>זמינות א׳–ה׳, <span dir="ltr">8:00–12:00</span></div>
+  </section>
+
+  <!-- 7: CTA -->
+  <section class="scene center" data-start="25" data-end="31">
+    <div class="a huge" data-d=".1">זה <span class="hl">את/ה</span>? <span class="emoji">🙌</span></div>
+    <div class="a mid" data-d=".5">שלחו קורות חיים למייל:</div>
+    <div class="a mail" data-d=".8">arielkahalaniwork@gmail.com</div>
+    <div class="a jobno" data-d="1.3">וציינו משרה <b>1110856</b></div>
+    <div class="a note" data-d="1.8">המשרה מיועדת לנשים ולגברים כאחד · שתפו מישהו שזה בשבילו 💌</div>
+  </section>
+
+<script>
+  const TOTAL = 31;
+  const scenes = [...document.querySelectorAll('.scene')].map(el => ({
+    el, s: +el.dataset.start, e: +el.dataset.end,
+    items: [...el.querySelectorAll('.a')].map(a => ({ a, d: +a.dataset.d }))
+  }));
+  const ease = x => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+  const bar = document.querySelector('#progress i');
+  const b = [b1, b2, b3];
+
+  window.renderAt = (t) => {
+    bar.style.width = (t / TOTAL * 100) + '%';
+    b[0].style.transform = `translate(${Math.sin(t * .5) * 60}px, ${Math.cos(t * .4) * 50}px)`;
+    b[1].style.transform = `translate(${Math.cos(t * .35) * 70}px, ${Math.sin(t * .45) * 60}px)`;
+    b[2].style.transform = `translate(${Math.sin(t * .3) * -90}px, ${Math.cos(t * .5) * 80}px)`;
+    for (const sc of scenes) {
+      const on = t >= sc.s && t < sc.e;
+      sc.el.style.display = on ? 'flex' : 'none';
+      if (!on) continue;
+      const local = t - sc.s;
+      const isLast = sc === scenes[scenes.length - 1];
+      const out = isLast ? 0 : ease((t - (sc.e - .35)) / .35);
+      sc.el.style.opacity = 1 - out;
+      sc.el.style.transform = `translateX(${-out * 120}px)`;
+      for (const { a, d } of sc.items) {
+        const p = ease((local - d) / .55);
+        a.style.opacity = p;
+        a.style.transform = `translateY(${(1 - p) * 60}px) scale(${.94 + .06 * p})`;
+      }
+      if (isLast) {
+        const mail = sc.el.querySelector('.mail');
+        const pulse = local > 1.6 ? 1 + Math.sin((local - 1.6) * 4) * .025 : null;
+        if (pulse) mail.style.transform = `scale(${pulse})`;
+      }
+    }
+  };
+  window.TOTAL = TOTAL;
+  renderAt(new URLSearchParams(location.search).get('t') || 0);
+</script>
+</body>
+</html>
