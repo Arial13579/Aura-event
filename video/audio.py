@@ -54,74 +54,83 @@ def pad(freqs, dur, a=.6, rel=.8):
 
 mtof = lambda m: 440 * 2 ** ((m - 69) / 12)
 
-# ---- S1: tension 0 - 4.3
-add(pad([mtof(33), mtof(40)], 4.4, a=.3, rel=.4), 0, .35)
-for k in range(17):
-    add(tone(1760, .08, d=.03), .15 + k * .25, .07 if k % 2 else .11, pan=.3 if k % 2 else -.3)
-for k in range(10):
-    tk = .6 + k * .09
-    add(noise(.06, .02), tk, .09, pan=(rng.random() - .5))
-add(kick(1.0), .55); add(noise(.4, .12, False), .55, .12)
-add(kick(1.2), 2.62); add(noise(.6, .15, False), 2.62, .2)
-add(tone(mtof(57), 1.4, d=.6, harm=(1, 2, 3)), 1.85, .18)
-add(whoosh(.7), 3.75, .35)
-
-# ---- S2: pain 4.3 - 8.6 (clock ticks, thuds)
-add(pad([mtof(45), mtof(48), mtof(52)], 3.4, a=.4, rel=.3), 4.3, .22)
-for k in range(13):
-    add(noise(.03, .008), 4.4 + k * .25, .12 if k % 2 == 0 else .07)
-for tt in (4.45, 5.6, 6.6):
-    add(kick(.7), tt); add(tone(mtof(33), .6, d=.25), tt, .2)
-for tt in (5.0, 6.15, 7.15):
-    add(noise(.25, .07), tt, .1)  # strike
-add(kick(1.4), 7.68); add(noise(.8, .25, False), 7.68, .25); add(tone(mtof(28), 1.0, d=.5), 7.68, .4)
-add(whoosh(.75), 7.9, .5)
-
-# ---- S3..S5: upbeat 8.6 - 23.2 (120bpm)
-prog = [[60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65]]  # C G Am F
+# ---- S1 WARNING 0 - 3.9 (red, alarm)
+add(pad([mtof(33), mtof(40)], 4.0, a=.2, rel=.3), 0, .4)
+add(whoosh(.4), -0.0 if False else 0.0, .3)
+for k in range(7):  # alarm beeps
+    add(tone(mtof(81) if k % 2 == 0 else mtof(76), .2, a=.005, d=.15, harm=(1, 3, 5)), 1.0 + k * .4, .09)
+for i in range(5):  # letter slams
+    add(kick(.8), .3 + i * .07); add(noise(.12, .04), .3 + i * .07, .12)
+add(kick(1.4), .78); add(noise(.7, .2, False), .78, .3); add(tone(mtof(26), 1.2, d=.6), .78, .45)
+add(noise(.2, .05), 1.15, .1)
+add(kick(.9), 1.55); add(noise(.3, .08), 1.55, .12)
+add(whoosh(.5), 3.35, .45)
+# ---- S2 PAIN 3.9 - 7.8
+add(pad([mtof(45), mtof(48), mtof(52)], 3.3, a=.3, rel=.3), 3.9, .2)
+for tt in (4.0, 4.6, 5.2):
+    add(kick(1.1), tt); add(noise(.35, .1, False), tt, .2)
+for tt in (4.25, 4.85, 5.45):
+    add(noise(.2, .05), tt, .16, pan=.3)
+for k in range(4):
+    add(noise(.03, .008), 5.95 + k * .15, .14)
+add(kick(.8), 6.6); add(tone(mtof(33), .6, d=.3), 6.6, .25)
+add(whoosh(.45, False), 6.95, .3)
+add(whoosh(.5), 6.85, .45)
+add(kick(1.7), 7.32); add(noise(1.0, .3, False), 7.32, .32); add(tone(mtof(24), 1.4, d=.7), 7.32, .55)
+# ---- groove 7.8 - 22.8
+prog = [[60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65]]
 bass = [36, 43, 45, 41]
-t = 8.6; bar = 0
-while t < 23.1:
+t = 7.8; bar = 0
+while t < 22.75:
     ch = prog[bar % 4]
-    d = min(2.0, 23.2 - t)
-    add(pad([mtof(m) for m in ch], d + .3, a=.08, rel=.3), t, .28)
+    d = min(2.0, 22.8 - t)
+    add(pad([mtof(m) for m in ch], d + .25, a=.06, rel=.25), t, .26)
     for b in range(4):
         tb = t + b * .5
-        if tb >= 23.1: break
+        if tb >= 22.75: break
         add(kick(.85), tb)
         add(tone(mtof(bass[bar % 4]), .45, a=.005, d=.18, harm=(1, 2)), tb, .35)
-        add(noise(.05, .015), tb + .25, .06, pan=.2)
-        if b in (1, 3): add(noise(.18, .05), tb, .08, pan=-.2)
+        add(noise(.05, .015), tb + .25, .07, pan=.2)
+        add(noise(.04, .01), tb + .125, .03, pan=-.3); add(noise(.04, .01), tb + .375, .03, pan=-.3)
+        if b in (1, 3): add(noise(.18, .05), tb, .1, pan=-.2)
         add(tone(mtof(ch[(b * 2) % 4] + 12), .25, d=.12, harm=(1, 2)), tb + .25, .05, pan=.4)
     t += 2.0; bar += 1
-add(kick(1.5), 8.6); add(noise(1.0, .3, False), 8.6, .2)
-for i, m in enumerate([72, 76, 79, 84]):
-    add(tone(mtof(m), .8, d=.3, harm=(1, 2, 3)), 9.45 + i * .07, .12)
-for w in (11.0, 19.4):
-    add(whoosh(.6), w, .3)
-for k in range(14):  # typing
-    add(noise(.025, .006), 11.8 + k * .064 + rng.random() * .02, .14, pan=(rng.random() - .5) * .6)
-for tt in (12.8, 13.1, 13.4):
-    add(tone(mtof(84), .2, d=.07, harm=(1, 2)), tt, .14)
-add(noise(.04, .01), 14.27, .25); add(tone(mtof(91), .25, d=.08), 14.3, .12)
-for tt in (14.75, 15.65):
-    add(tone(mtof(88), .4, d=.15, harm=(1, 3)), tt, .14); add(tone(mtof(93), .5, d=.2, harm=(1, 3)), tt + .09, .14)
-add(noise(1.0, .5, False) * 0 + lowpass(rng.standard_normal(int(SR * 1.0)), .02) * env(int(SR * 1.0), .2, .5), 16.9, .25)
-for i, m in enumerate([72, 76, 79, 84, 88]):
-    add(tone(mtof(m), 1.2, d=.5, harm=(1, 2, 3)), 17.97 + i * .06, .15)
-add(noise(.6, .25), 18.0, .12)
 for i in range(4):
-    add(tone(mtof(79 + i * 2), .3, d=.1, harm=(1, 2)), 20.3 + i * .38, .1)
-
-# ---- S6: drop & resolve 23.2 - 26.5
-add(whoosh(.5, False), 23.15, .3)
-add(pad([mtof(45), mtof(52), mtof(57)], 1.0, a=.2, rel=.4), 23.2, .2)
-add(kick(1.6), 23.72); add(noise(1.0, .35, False), 23.72, .25); add(tone(mtof(29), 1.2, d=.6), 23.72, .45)
-add(whoosh(.5), 24.5, .3)
-add(pad([mtof(m) for m in (48, 60, 64, 67, 72)], 1.6, a=.02, rel=.4), 24.95, .35)
-add(kick(1.4), 24.95)
+    add(noise(.05, .012), 7.85 + i * .05, .2)
+add(kick(1.2), 8.25); add(tone(mtof(84), .3, d=.1, harm=(1, 2, 3)), 8.25, .15)
+add(whoosh(.3), 8.05, .35); add(whoosh(.3), 8.13, .3)
+for i, m in enumerate([72, 76, 79, 84]):
+    add(tone(mtof(m), .8, d=.3, harm=(1, 2, 3)), 8.4 + i * .07, .1)
+add(whoosh(.7), 9.7, .35); add(whoosh(.6), 9.95, .3)
+for k in range(12):
+    add(noise(.025, .006), 10.8 + k * .062 + rng.random() * .02, .14, pan=(rng.random() - .5) * .6)
+for tt in (11.65, 11.9, 12.15):
+    add(tone(mtof(84), .2, d=.07, harm=(1, 2)), tt, .14)
+add(tone(mtof(91), .3, d=.1), 12.5, .1)
+add(noise(.04, .01), 13.4, .3); add(tone(mtof(91), .25, d=.08), 13.42, .12)
+for tt in (13.7, 14.35):
+    add(tone(mtof(88), .4, d=.15, harm=(1, 3)), tt, .14); add(tone(mtof(93), .5, d=.2, harm=(1, 3)), tt + .09, .14)
+add(whoosh(.6), 14.75, .4)
+add(lowpass(rng.standard_normal(int(SR * 1.0)), .03) * env(int(SR * 1.0), .2, .6), 15.55, .3)
+add(kick(1.4), 16.85); add(noise(.6, .25), 16.85, .15)
+for i, m in enumerate([72, 76, 79, 84, 88]):
+    add(tone(mtof(m), 1.2, d=.5, harm=(1, 2, 3)), 16.87 + i * .06, .14)
+add(whoosh(.6), 18.45, .45)
+for tt in (19.0, 19.95, 20.9, 21.85):
+    add(kick(1.3), tt); add(noise(.5, .15, False), tt, .22); add(whoosh(.3), tt - .3, .25)
+# ---- S6 23
+add(whoosh(.35), 22.75, .3)
+add(pad([mtof(45), mtof(52), mtof(57)], 1.6, a=.2, rel=.4), 22.8, .2)
+add(kick(1.5), 23.32); add(noise(.8, .25, False), 23.32, .25)
+add(kick(1.8), 23.66); add(noise(1.0, .35, False), 23.66, .3); add(tone(mtof(24), 1.3, d=.7), 23.66, .55)
+add(whoosh(.45), 24.3, .35)
+for i in range(4):
+    add(noise(.05, .012), 24.65 + i * .05, .2)
+add(tone(mtof(84), .3, d=.1, harm=(1, 2, 3)), 25.0, .15)
+add(pad([mtof(m) for m in (48, 60, 64, 67, 72)], 1.6, a=.02, rel=.4), 25.0, .35)
+add(kick(1.4), 25.0)
 for i, m in enumerate([72, 76, 79, 84, 88, 91]):
-    add(tone(mtof(m), 1.4, d=.6, harm=(1, 2, 3)), 25.1 + i * .06, .1)
+    add(tone(mtof(m), 1.4, d=.6, harm=(1, 2, 3)), 25.45 + i * .06, .1)
 add(pad([mtof(m) for m in (48, 55, 64, 67, 71, 74)], 1.0, a=.05, rel=.9), 25.5, .3)
 
 mix = np.stack([L, R], 1)
