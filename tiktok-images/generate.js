@@ -23,10 +23,21 @@ h1 em{font-style:normal;color:var(--accent)}
 .foot{margin-top:auto;font-size:38px;font-weight:700;color:#5d5578;text-align:center}
 .foot b{color:var(--accent)}
 `;
+const css2 = `
+.big{font-size:300px;font-weight:900;line-height:.9;color:var(--accent);opacity:.9;margin-top:40px}
+.ex{margin-top:50px;background:rgba(255,255,255,.82);border-radius:44px;padding:50px;box-shadow:0 18px 50px rgba(80,60,120,.10)}
+.ex .lbl{font-size:32px;font-weight:800;color:var(--accent);margin-bottom:18px}
+.ex p{font-size:40px;line-height:1.5;color:#4a4266}
+.bubble{background:var(--soft);border-radius:30px 30px 30px 8px;padding:28px 34px;font-size:38px;line-height:1.45;margin-top:16px;color:#3B3355}
+.chip{align-self:flex-start;margin-top:44px;background:var(--accent);color:#fff;font-weight:800;font-size:38px;padding:18px 36px;border-radius:60px}
+.hero-list{margin-top:70px;display:flex;flex-direction:column;gap:30px}
+.hero-list div{background:rgba(255,255,255,.8);border-radius:36px;padding:34px 44px;font-size:44px;font-weight:700;box-shadow:0 14px 40px rgba(80,60,120,.08)}
+.hero-list span{color:var(--accent);font-weight:900;margin-left:18px}
+`;
 const blobs = (c1,c2,c3)=>`<div class="bgl"><div class="blob" style="width:700px;height:700px;background:${c1};top:-200px;left:-250px"></div>
 <div class="blob" style="width:600px;height:600px;background:${c2};bottom:-150px;right:-200px"></div>
 <div class="blob" style="width:380px;height:380px;background:${c3};top:45%;left:-120px"></div></div>`;
-const page = (n, theme, body) => `<!doctype html><html><head><meta charset="utf-8"><style>${css}
+const page = (n, theme, body) => `<!doctype html><html><head><meta charset="utf-8"><style>${css}${css2}
 :root{--bg:${theme.bg};--accent:${theme.accent};--soft:${theme.soft}}</style></head>
 <body>${blobs(...theme.blobs)}<div class="page">${n}/5</div><div class="wrap">${body}</div></body></html>`;
 const card = (i,t,p,s)=>`<div class="card"><div class="num">${i}</div><div><h3>${t}</h3><p>${p}</p>${s?`<span class="save">${s}</span>`:''}</div></div>`;
@@ -40,37 +51,38 @@ const T = [
 ];
 
 const pages = [
- page(1,T[0],`<div class="tag">לבעלי עסקים קטנים בתחום האירועים</div>
- <h1>עובדים 12 שעות ביום<br>ו<em>עדיין</em> לא מספיקים?</h1>
- <div class="sub">רוב הזמן שלכם לא הולך על האירוע עצמו —<br>הוא הולך על כל מה שמסביב.</div>
- <div class="cards">
-  ${card('?','מענה לאותן שאלות שוב ושוב','"כמה זה עולה?" "אתם פנויים ב־12/3?"')}
-  ${card('?','רדיפה אחרי מקדמות ואישורים','הודעות, תזכורות, ועוד הודעות…')}
-  ${card('?','הצעת מחיר שלוקחת שעה','וורד, מחשבון, תיקונים ושליחה מחדש')}
+ page(1,T[0],`<div class="tag">לבעלי עסקים בתחום האירועים</div>
+ <h1 style="font-size:116px;margin-top:80px">בעל עסק של אירועים<br>ו<em>אין לך זמן?</em></h1>
+ <div class="sub" style="font-size:52px;font-weight:700;color:#3B3355;margin-top:50px">קבל 4 טיפים לחסוך זמן<br>כבר מהשבוע הזה</div>
+ <div class="hero-list">
+  <div><span>01</span>פחות הקלדה</div>
+  <div><span>02</span>פחות הודעות הלוך ושוב</div>
+  <div><span>03</span>פחות הסחות דעת</div>
+  <div><span>04</span>הטיפ שחוסך הכי הרבה</div>
  </div>
- <div class="foot">החליקו ← <b>טיפים שיחזירו לכם שעות כל שבוע</b></div>`),
- page(2,T[1],`<div class="tag">טיפ 1–2 · תקשורת עם לקוחות</div>
- <h1>תפסיקו <em>להקליד</em><br>את אותה הודעה</h1>
- <div class="cards">
-  ${card(1,'הודעות מוכנות בוואטסאפ ביזנס','הכינו תשובות קבועות: מחירון בסיסי, אזורי שירות, איך מזמינים, מה כלול בחבילה. לחיצה אחת — ונשלח.','חיסכון: ~3 שעות בשבוע')}
-  ${card(2,'יומן זמינות אונליין','במקום "רגע, אני בודק ביומן" — שלחו לינק שבו הלקוח רואה תאריכים פנויים וקובע שיחה לבד.','חיסכון: ~2 שעות בשבוע')}
- </div>
- <div class="foot">טיפ קטן: תנו להודעת הפתיחה <b>לסנן</b> לקוחות לא רלוונטיים</div>`),
- page(3,T[2],`<div class="tag">טיפ 3–4 · סדר וארגון</div>
- <h1>כל הפרטים<br>במקום <em>אחד</em></h1>
- <div class="cards">
-  ${card(3,'טופס פרטי אירוע אחיד','תאריך, מיקום, מספר אורחים, שעות, איש קשר — טופס אחד במקום 20 הודעות הלוך ושוב.','חיסכון: ~40 דק׳ לכל לקוח')}
-  ${card(4,'תזכורות אוטומטיות','תזכורת למקדמה, אישור סופי שבוע לפני, והודעת "מחר נפגשים" — בלי לזכור לבד.','פחות ביטולים, פחות לחץ')}
- </div>
- <div class="foot">מה שלא כתוב — <b>נשכח</b>. מה שאוטומטי — <b>קורה</b>.</div>`),
- page(4,T[3],`<div class="tag">טיפ 5–6 · סגירת עסקאות</div>
- <h1>סוגרים לקוח<br><em>בלי</em> פגישה נוספת</h1>
- <div class="cards">
-  ${card(5,'חוזה וחתימה דיגיטלית','הלקוח חותם מהטלפון תוך דקה. בלי הדפסות, סריקות ו"שלחתי לך במייל?"','חיסכון: ~1 שעה לכל סגירה')}
-  ${card(6,'לינק תשלום למקדמה','המקדמה משולמת באותו רגע שבו הלקוח מתלהב — ולא אחרי שבוע של מרדפים.','בלי מרדפים אחרי כסף')}
- </div>
- <div class="foot">ורגע לפני כל זה, יש <b>צעד אחד</b> שאוכל הכי הרבה זמן ←</div>`),
- page(5,T[4],`<div class="tag">הטיפ הכי חשוב</div>
+ <div class="foot">החליקו ← <b>ותחזירו לעצמכם שעות</b></div>`),
+page(2,T[1],`<div class="tag">טיפ 1 · תקשורת</div>
+ <div class="big">1</div>
+ <h1 style="margin-top:10px"><em>תשובות מוכנות</em><br>בוואטסאפ</h1>
+ <div class="sub">את אותן 5 שאלות שואלים אתכם כל יום. תכתבו את התשובה פעם אחת — ותשלחו בלחיצה.</div>
+ <div class="ex"><div class="lbl">דוגמה</div><div class="bubble">היי! המחיר לאירוע מתחיל מ־X ₪ וכולל… לבדיקת זמינות שלחו תאריך, מיקום ומספר אורחים</div></div>
+ <div class="chip">חיסכון: כ־3 שעות בשבוע</div>
+ <div class="foot">החליקו לטיפ הבא ←</div>`),
+page(3,T[2],`<div class="tag">טיפ 2 · סדר</div>
+ <div class="big">2</div>
+ <h1 style="margin-top:10px">טופס <em>אחד</em><br>לכל הפרטים</h1>
+ <div class="sub">במקום 20 הודעות "ומה השעה?" "וכמה אורחים?" — לינק לטופס קצר שהלקוח ממלא לבד.</div>
+ <div class="ex"><div class="lbl">מה שמים בטופס</div><p>תאריך · מיקום · מספר אורחים · שעות · סוג האירוע · איש קשר ביום האירוע</p></div>
+ <div class="chip">חיסכון: כ־40 דקות לכל לקוח</div>
+ <div class="foot">החליקו לטיפ הבא ←</div>`),
+page(4,T[3],`<div class="tag">טיפ 3 · ריכוז</div>
+ <div class="big">3</div>
+ <h1 style="margin-top:10px">שעה <em>קבועה</em><br>להודעות</h1>
+ <div class="sub">לענות לכל הודעה ברגע שהיא מגיעה — זה מה שגונב לכם את היום. קבעו 2 חלונות ביום לענות לכולם ביחד.</div>
+ <div class="ex"><div class="lbl">איך זה נראה</div><p>10:00 ו־17:00 — סבב תשובות.<br>בין לבין: התראות כבויות, עבודה רצופה.</p></div>
+ <div class="chip">פחות הסחות · יותר ריכוז</div>
+ <div class="foot">החליקו לטיפ הבא ←</div>`),
+ page(5,T[4],`<div class="tag">טיפ 4 · הטיפ שחוסך הכי הרבה</div>
  <h1>הצעת מחיר<br>ב<em>דקה</em>, לא בשעה</h1>
  <div class="sub">מערכת הצעות המחיר שלי נבנתה בדיוק בשביל בעלי עסקים בתחום האירועים:</div>
  <div class="cards" style="gap:26px;margin-top:44px">
