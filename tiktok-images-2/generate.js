@@ -31,6 +31,9 @@ h1 em{font-style:normal;color:var(--a)}
 .one h3{font-size:58px;font-weight:900}
 .one p{font-size:36px;margin-top:10px;font-weight:500}
 .cta{margin-top:auto;background:#fff;color:#0E0E10;border-radius:60px;padding:34px;text-align:center;font-size:46px;font-weight:900}
+.hero-list{margin-top:70px;display:flex;flex-direction:column;gap:28px}
+.hero-list div{background:#1A1A1D;border:1px solid rgba(255,255,255,.08);border-radius:36px;padding:34px 44px;font-size:44px;font-weight:700;color:#F4EFEA}
+.hero-list span{color:var(--a);font-weight:900;margin-left:20px}
 .cta span{color:var(--a2)}
 `;
 const P = [
@@ -43,10 +46,20 @@ const page=(n,p,body)=>`<!doctype html><html><head><meta charset="utf-8"><style>
 :root{--a:${p.a};--a2:${p.a2||p.a}}</style></head><body>
 <div class="bgl"><div class="glow" style="width:800px;height:800px;background:${p.g[0]};top:-300px;left:-300px"></div>
 <div class="glow" style="width:700px;height:700px;background:${p.g[1]};bottom:-300px;right:-300px"></div></div>
-<div class="page">${n}/4</div><div class="wrap">${body}</div></body></html>`;
+<div class="page">${n}/5</div><div class="wrap">${body}</div></body></html>`;
 
 const pages=[
- page(1,P[0],`<div class="tag">טיפ 1 · ניהול זמן לבעלי עסקים</div>
+ page(1,P[0],`<div class="tag">לבעלי עסקים</div>
+ <h1 style="font-size:124px;margin-top:80px">בעל עסק<br><em>ואין לך זמן?</em></h1>
+ <div class="sub" style="font-size:54px;font-weight:700;color:#fff;margin-top:50px">קבל 4 טיפים לחסוך זמן<br>כבר מהשבוע הזה</div>
+ <div class="hero-list">
+  <div><span>01</span>לגלות לאן הזמן בורח</div>
+  <div><span>02</span>להפסיק לעשות הכול לבד</div>
+  <div><span>03</span>להתמקד במה שבאמת מכניס</div>
+  <div><span>04</span>הטיפ שחוסך הכי הרבה</div>
+ </div>
+ <div class="foot">החליקו ← <b>ותחזירו לעצמכם שעות</b></div>`),
+ page(2,P[0],`<div class="tag">טיפ 1 · ניהול זמן לבעלי עסקים</div>
  <div class="big">01</div>
  <h1>תעדו את<br>ה<em>יום הממוצע</em> שלכם</h1>
  <div class="sub">קחו דף ורשמו יום רגיל מהבוקר עד הלילה — בדקות. בלי לייפות. ככה תגלו לאן הזמן באמת בורח.</div>
@@ -54,7 +67,7 @@ const pages=[
   <li>שיחות טלפון והודעות</li><li>נסיעות ושליחויות</li><li>הפסקות ודברים שלא קשורים לעבודה</li></ul></div>
  <div class="chip">מה שנמדד — משתפר</div>
  <div class="foot">החליקו לטיפ הבא ←</div>`),
- page(2,P[1],`<div class="tag">טיפ 2 · האצלת סמכויות</div>
+ page(3,P[1],`<div class="tag">טיפ 2 · האצלת סמכויות</div>
  <div class="big">02</div>
  <h1>תפסיקו<br>לעשות <em>הכול לבד</em></h1>
  <div class="sub">עסק שגדל צריך עוד ידיים. העבירו משימות לאנשים אחרים — אבל רק אחרי שהדרכתם אותם כמו שצריך.</div>
@@ -62,7 +75,7 @@ const pages=[
   <li>מדריכים לפי השיטה שלכם</li><li>מגדירים בדיוק על מה האחריות</li><li>תקופת ניסיון לפני שמשחררים</li></ul></div>
  <div class="chip">אתם מנהלים — לא עושים הכול</div>
  <div class="foot">החליקו לטיפ הבא ←</div>`),
- page(3,P[2],`<div class="tag">טיפ 3 · עקרון פרטו</div>
+ page(4,P[2],`<div class="tag">טיפ 3 · עקרון פרטו</div>
  <div class="big">03</div>
  <h1>כלל ה־<em>80/20</em></h1>
  <div class="sub">80% מהתוצאות מגיעות מ־20% מהמאמץ. רשמו מה עשיתם היום שבאמת קידם את העסק — ותתמקדו רק בזה.</div>
@@ -72,7 +85,7 @@ const pages=[
  </div>
  <div class="chip">ולא לקפוץ על כל רעיון חדש</div>
  <div class="foot">ויש עוד דרך לחסוך שעות ←</div>`),
- page(4,P[3],`<div class="tag">הטיפ הכי חוסך</div>
+ page(5,P[3],`<div class="tag">הטיפ הכי חוסך</div>
  <h1 style="margin-top:50px">למה לעבוד<br>עם <em>6 מערכות?</em></h1>
  <div class="apps">
   <div class="app"><s>מערכת הצעות מחיר</s></div><div class="app"><s>אקסל לקוחות</s></div>
